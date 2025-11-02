@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tic-Tac-Toe by Mahin</title>
+<style>
+:root{
+  --bg: linear-gradient(135deg,#4f46e5,#06b6d4);
+  --text:#fff;
+  --cell-bg: rgba(255,255,255,0.15);
+  --cell-hover: rgba(255,255,255,0.28);
+  --btn-bg:#fff;
+  --btn-color:#4f46e5;
+  --winner-color: #fbbf24;
+}
+body.dark{
+  --bg: linear-gradient(135deg,#0f172a,#1e3a8a);
+  --text:#e0e7ff;
+  --cell-bg: rgba(255,255,255,0.08);
+  --cell-hover: rgba(255,255,255,0.18);
+  --btn-bg:#1e3a8a;
+  --btn-color:#e0e7ff;
+  --winner-color:#facc15;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  font-family:Poppins,system-ui,Segoe UI,Roboto;
+  background:var(--bg);
+  color:var(--text);
+  padding-top:36px;
+  transition:background .4s,color .4s;
+}
+h1{
+  font-size:38px;
+  margin:0 0 18px 0;
+  background: linear-gradient(90deg,#f43f5e,#22c55e,#3b82f6);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-weight:800;
+}
+.container{width:100%;max-width:480px;padding:0 16px;text-align:center;}
+.screen{display:none;}
+.screen.active{display:block;}
+button{
+  padding:10px 18px;border-radius:10px;border:0;
+  background:var(--btn-bg);color:var(--btn-color);cursor:pointer;
+  font-weight:700;margin:8px;transition:transform .14s,background .14s;
+}
+button:hover{transform:scale(1.03);}
+.board{
+  margin:18px auto 8px;
+  display:grid;grid-template-columns: repeat(3,100px);
+  grid-template-rows: repeat(3,100px);gap:8px;
+  width: calc(3*100px + 2*8px); position:relative;
+  padding:8px;border-radius:14px;background:rgba(255,255,255,0.04);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+.cell{
+  width:100px;height:100px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--cell-bg);font-size:48px;font-weight:800;
+  user-select:none;cursor:pointer;transition:transform .12s,background .12s;
+}
+.cell:hover{transform:scale(1.03);background:var(--cell-hover);}
+.cell.X{color:#22c55e;text-shadow:0 0 10px #22c55e;}
+.cell.O{color:#f43f5e;text-shadow:0 0 10px #f43f5e;}
+.winner{box-shadow:0 0 18px rgba(0,0,0,0.2);background:rgba(255,255,255,0.28) !important;}
+#winning-line{
+  position:absolute; left:0; top:0; height:8px; border-radius:8px;
+  background: linear-gradient(90deg,var(--winner-color), #f59e0b);
+  transform-origin: 0 50%; opacity:0; pointer-events:none;
+  box-shadow:0 0 18px rgba(250,200,50,0.9);
+  transition:opacity .16s, width .2s, left .08s, top .08s, transform .16s;
+}
+#result{margin-top:12px;font-size:20px;font-weight:700;}
+#reset{background:#f59e0b;color:white;margin-top:12px;}
+#toggle-mode{background:#3b82f6;color:white;margin-top:12px;}
+.small-note{font-size:13px;opacity:.9;margin-top:6px;}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic-Tac-Toe by Mahin</h1>
+
+    <!-- Mode selection (toggle here only) -->
+    <div id="mode-screen" class="screen active">
+      <p>Select Mode:</p>
+      <button data-mode="pvp">Player vs Player</button>
+      <button data-mode="ai">Player vs Computer</button>
+      <div>
+        <button id="toggle-mode">Toggle Dark / Light Mode</button>
+      </div>
+      <div class="small-note">Dark/Light toggle is available here before you start the game.</div>
+    </div>
+
+    <!-- Character selection -->
+    <div id="char-screen" class="screen">
+      <p>Choose your character:</p>
+      <button data-char="X">X</button>
+      <button data-char="O">O</button>
+    </div>
+
+    <!-- Game screen -->
+    <div id="game-screen" class="screen">
+      <div class="board" id="board">
+        <div id="winning-line"></div>
+      </div>
+      <div id="result"></div>
+      <div>
+        <button id="reset">Restart</button>
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
