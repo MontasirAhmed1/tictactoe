@@ -8,6 +8,7 @@ let gameActive = true;
 
 const boardDiv = document.getElementById("board");
 const statusDiv = document.getElementById("status");
+const aiThinkingDiv = document.getElementById("aiThinking");
 
 // Screen navigation
 function showScreen(id) {
@@ -34,7 +35,7 @@ function setChar(char) {
 
   if (aiChar === "X") {
     currentPlayer = aiChar;
-    setTimeout(() => { aiMove(); }, 600);
+    aiMove();
   } else currentPlayer = playerChar;
 }
 
@@ -80,37 +81,40 @@ function handleClick(i) {
 
   currentPlayer = currentPlayer === "X" ? "O" : "X";
 
-  if (mode === "ai" && currentPlayer === aiChar) {
-    setTimeout(() => { aiMove(); }, 600);
-  }
+  if (mode === "ai" && currentPlayer === aiChar) aiMove();
 }
 
 // AI move
 function aiMove() {
   if (!gameActive) return;
-  let move;
-  if (difficulty === "easy") move = randomMove();
-  else if (difficulty === "medium") move = Math.random() < 0.5 ? randomMove() : bestMove();
-  else move = bestMove();
+  aiThinkingDiv.style.display = "block";
 
-  if (move !== undefined) {
-    board[move] = aiChar;
+  setTimeout(() => {
+    let move;
+    if (difficulty === "easy") move = randomMove();
+    else if (difficulty === "medium") move = Math.random() < 0.5 ? randomMove() : bestMove();
+    else move = bestMove();
+
+    if (move !== undefined) board[move] = aiChar;
+
     updateBoard();
 
     const winner = checkWinner();
-    if (winner) return endGame(winner);
-    if (!board.includes("")) return endGame("draw");
+    if (winner) { aiThinkingDiv.style.display = "none"; return endGame(winner); }
+    if (!board.includes("")) { aiThinkingDiv.style.display = "none"; return endGame("draw"); }
 
     currentPlayer = playerChar;
-  }
+    aiThinkingDiv.style.display = "none";
+  }, 800); // 0.8s AI thinking delay
 }
 
+// Random AI
 function randomMove() {
   const available = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
   return available[Math.floor(Math.random() * available.length)];
 }
 
-// Minimax
+// Minimax AI
 function bestMove() {
   let bestScore = -Infinity;
   let move;
@@ -119,10 +123,7 @@ function bestMove() {
       board[i] = aiChar;
       let score = minimax(board, 0, false);
       board[i] = "";
-      if (score > bestScore) {
-        bestScore = score;
-        move = i;
-      }
+      if (score > bestScore) { bestScore = score; move = i; }
     }
   }
   return move;
@@ -136,15 +137,11 @@ function minimax(bd, depth, isMax) {
 
   if (isMax) {
     let best = -Infinity;
-    for (let i = 0; i < 9; i++) {
-      if (bd[i] === "") { bd[i] = aiChar; best = Math.max(best, minimax(bd, depth + 1, false)); bd[i] = ""; }
-    }
+    for (let i = 0; i < 9; i++) { if (bd[i] === "") { bd[i] = aiChar; best = Math.max(best, minimax(bd, depth + 1, false)); bd[i] = ""; } }
     return best;
   } else {
     let best = Infinity;
-    for (let i = 0; i < 9; i++) {
-      if (bd[i] === "") { bd[i] = playerChar; best = Math.min(best, minimax(bd, depth + 1, true)); bd[i] = ""; }
-    }
+    for (let i = 0; i < 9; i++) { if (bd[i] === "") { bd[i] = playerChar; best = Math.min(best, minimax(bd, depth + 1, true)); bd[i] = ""; } }
     return best;
   }
 }
@@ -182,10 +179,7 @@ function checkWinnerLogic(bd) {
 
 // Highlight winning cells
 function highlightWinCells(cells) {
-  cells.forEach(i => {
-    const cell = boardDiv.children[i];
-    if (cell) cell.classList.add("win");
-  });
+  cells.forEach(i => { const cell = boardDiv.children[i]; if (cell) cell.classList.add("win"); });
 }
 
 // End game
