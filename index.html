@@ -1,121 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tic-Tac-Toe by Mahin</title>
 <style>
-:root{
-  --bg: linear-gradient(135deg,#4f46e5,#06b6d4);
-  --text:#fff;
-  --cell-bg: rgba(255,255,255,0.15);
-  --cell-hover: rgba(255,255,255,0.28);
-  --btn-bg:#fff;
-  --btn-color:#4f46e5;
-  --winner-color: #fbbf24;
+:root {
+  --primary-light: #4facfe;
+  --primary-dark: #00f2fe;
+  --bg-light1: #dff6ff;
+  --bg-light2: #bde0fe;
+  --bg-dark1: #0f172a;
+  --bg-dark2: #1e293b;
+  --text-light: #1a1a1a;
+  --text-dark: #f1f5f9;
 }
-body.dark{
-  --bg: linear-gradient(135deg,#0f172a,#1e3a8a);
-  --text:#e0e7ff;
-  --cell-bg: rgba(255,255,255,0.08);
-  --cell-hover: rgba(255,255,255,0.18);
-  --btn-bg:#1e3a8a;
-  --btn-color:#e0e7ff;
-  --winner-color:#facc15;
+
+/* ===== Base ===== */
+body {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin: 0;
+  color: var(--text-light);
+  background: linear-gradient(135deg, var(--bg-light1), var(--bg-light2));
+  transition: background 0.8s, color 0.4s;
+  min-height: 100vh;
 }
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  font-family:Poppins,system-ui,Segoe UI,Roboto;
-  background:var(--bg);
-  color:var(--text);
-  padding-top:36px;
-  transition:background .4s,color .4s;
+body.dark {
+  color: var(--text-dark);
+  background: linear-gradient(135deg, var(--bg-dark1), var(--bg-dark2));
 }
-h1{
-  font-size:38px;
-  margin:0 0 18px 0;
-  background: linear-gradient(90deg,#f43f5e,#22c55e,#3b82f6);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  font-weight:800;
+
+/* ===== Heading ===== */
+h1 {
+  margin: 40px 0 20px;
+  font-size: 2.2em;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #0077ff, #00f2fe, #ff00c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s infinite;
 }
-.container{width:100%;max-width:480px;padding:0 16px;text-align:center;}
-.screen{display:none;}
-.screen.active{display:block;}
-button{
-  padding:10px 18px;border-radius:10px;border:0;
-  background:var(--btn-bg);color:var(--btn-color);cursor:pointer;
-  font-weight:700;margin:8px;transition:transform .14s,background .14s;
+@keyframes shimmer {
+  0% {background-position: 0%;}
+  100% {background-position: 200%;}
 }
-button:hover{transform:scale(1.03);}
-.board{
-  margin:18px auto 8px;
-  display:grid;grid-template-columns: repeat(3,100px);
-  grid-template-rows: repeat(3,100px);gap:8px;
-  width: calc(3*100px + 2*8px); position:relative;
-  padding:8px;border-radius:14px;background:rgba(255,255,255,0.04);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+/* ===== Screens ===== */
+.screen {
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
 }
-.cell{
-  width:100px;height:100px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--cell-bg);font-size:48px;font-weight:800;
-  user-select:none;cursor:pointer;transition:transform .12s,background .12s;
+.screen.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
-.cell:hover{transform:scale(1.03);background:var(--cell-hover);}
-.cell.X{color:#22c55e;text-shadow:0 0 10px #22c55e;}
-.cell.O{color:#f43f5e;text-shadow:0 0 10px #f43f5e;}
-.winner{box-shadow:0 0 18px rgba(0,0,0,0.2);background:rgba(255,255,255,0.28) !important;}
-#winning-line{
-  position:absolute; left:0; top:0; height:8px; border-radius:8px;
-  background: linear-gradient(90deg,var(--winner-color), #f59e0b);
-  transform-origin: 0 50%; opacity:0; pointer-events:none;
-  box-shadow:0 0 18px rgba(250,200,50,0.9);
-  transition:opacity .16s, width .2s, left .08s, top .08s, transform .16s;
+
+/* ===== Buttons ===== */
+button {
+  background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+  color: white;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 14px;
+  margin: 10px;
+  font-size: 17px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(79,172,254,0.5);
+  transition: all 0.4s ease;
 }
-#result{margin-top:12px;font-size:20px;font-weight:700;}
-#reset{background:#f59e0b;color:white;margin-top:12px;}
-#toggle-mode{background:#3b82f6;color:white;margin-top:12px;}
-.small-note{font-size:13px;opacity:.9;margin-top:6px;}
+button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 25px rgba(79,172,254,0.8);
+}
+body.dark button {
+  background: linear-gradient(90deg, #223a63, #612e85);
+  box-shadow: 0 0 20px rgba(97,46,133,0.5);
+}
+body.dark button:hover {
+  box-shadow: 0 0 25px rgba(155,89,182,0.8);
+}
+
+/* ===== Toggle ===== */
+#modeToggle {
+  display: inline-block;
+  margin-top: 30px;
+  font-size: 15px;
+}
+
+/* ===== Board ===== */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-template-rows: repeat(3, 120px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.cell {
+  background: rgba(255,255,255,0.6);
+  border-radius: 15px;
+  font-size: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.4s;
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.2),
+              0 0 20px rgba(79,172,254,0.3);
+}
+.cell:hover {
+  transform: rotateY(10deg) scale(1.05);
+}
+body.dark .cell {
+  background: rgba(25,25,35,0.8);
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.05),
+              0 0 25px rgba(97,46,133,0.3);
+}
+
+.cell.X { color: #ff005c; text-shadow: 0 0 18px #ff1d8e; }
+.cell.O { color: #00e1ff; text-shadow: 0 0 18px #00c4ff; }
+
+/* Winning cells highlight - responsive to mode */
+.cell.win {
+  animation: highlightWin 0.8s ease forwards;
+  background: linear-gradient(135deg, #6a5af9, #00e5ff);
+  box-shadow: 0 0 20px #6a5af9, 0 0 20px #00e5ff;
+}
+
+/* Dark mode variant */
+body.dark .cell.win {
+  background: linear-gradient(135deg, #ff6ec7, #ffcd3c);
+  box-shadow: 0 0 20px #ff6ec7, 0 0 20px #ffcd3c;
+}
+
+@keyframes highlightWin {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ===== Status ===== */
+#status {
+  font-size: 20px;
+  margin-top: 25px;
+  font-weight: 600;
+  animation: fadeIn 0.8s;
+}
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+/* ===== Glow transitions ===== */
+.fade-in { animation: appear 0.4s ease forwards; }
+@keyframes appear { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
+
 </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Tic-Tac-Toe by Mahin</h1>
+<h1>Tic-Tac-Toe by Mahin</h1>
 
-    <!-- Mode selection (toggle here only) -->
-    <div id="mode-screen" class="screen active">
-      <p>Select Mode:</p>
-      <button data-mode="pvp">Player vs Player</button>
-      <button data-mode="ai">Player vs Computer</button>
-      <div>
-        <button id="toggle-mode">Toggle Dark / Light Mode</button>
-      </div>
-      <div class="small-note">Dark/Light toggle is available here before you start the game.</div>
-    </div>
+<!-- Mode select -->
+<div id="modeSelect" class="screen active">
+  <h2>Select Mode</h2>
+  <button onclick="setMode('pvp')">🎮 Player vs Player</button>
+  <button onclick="setMode('ai')">🤖 Player vs Computer</button><br>
+  <button id="modeToggle" onclick="toggleDark()">🌙 Toggle Dark/Light</button>
+</div>
 
-    <!-- Character selection -->
-    <div id="char-screen" class="screen">
-      <p>Choose your character:</p>
-      <button data-char="X">X</button>
-      <button data-char="O">O</button>
-    </div>
+<!-- Difficulty select -->
+<div id="difficultySelect" class="screen">
+  <h2>Select Difficulty</h2>
+  <button onclick="setDifficulty('easy')">🙂 Easy</button>
+  <button onclick="setDifficulty('medium')">😐 Medium</button>
+  <button onclick="setDifficulty('hard')">😈 Hard</button><br>
+  <button onclick="goBack('difficultySelect')">⬅️ Back</button>
+</div>
 
-    <!-- Game screen -->
-    <div id="game-screen" class="screen">
-      <div class="board" id="board">
-        <div id="winning-line"></div>
-      </div>
-      <div id="result"></div>
-      <div>
-        <button id="reset">Restart</button>
-      </div>
-    </div>
-  </div>
+<!-- Character select -->
+<div id="charSelect" class="screen">
+  <h2>Select Your Character</h2>
+  <button onclick="setChar('X')">❌ X</button>
+  <button onclick="setChar('O')">⭕ O</button><br>
+  <button onclick="goBack('charSelect')">⬅️ Back</button>
+</div>
+
+<!-- Game screen -->
+<div id="gameScreen" class="screen">
+  <div class="board" id="board"></div>
+  <h3 id="status"></h3>
+  <button onclick="restartGame()">🔁 Restart</button>
+  <button onclick="backToMenu()">🏠 Main Menu</button>
+</div>
 
 <script src="app.js"></script>
 </body>
