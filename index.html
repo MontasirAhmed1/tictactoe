@@ -102,17 +102,15 @@ body.dark button:hover {
 
 /* ===== Sound toggle ===== */
 #soundToggle {
-  position: fixed;
-  top: 15px;
-  right: 15px;
   font-size: 28px;
   border: none;
   background: none;
   cursor: pointer;
-  z-index: 1000;
   transition: transform 0.2s ease, color 0.4s ease;
   color: var(--text-light);
   text-shadow: 0 0 8px rgba(79,172,254,0.5);
+  margin: 10px auto;
+  display: block;
 }
 #soundToggle:hover { transform: scale(1.2); }
 body.dark #soundToggle { color: var(--text-dark); text-shadow: 0 0 10px rgba(155,89,182,0.7); }
@@ -175,7 +173,6 @@ body.dark .cell.win {
 }
 @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 
-/* ===== Glow transitions ===== */
 .fade-in { animation: appear 0.4s ease forwards; }
 @keyframes appear { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
 
@@ -184,7 +181,9 @@ body.dark .cell.win {
   animation: blink 1s infinite;
   margin-top:10px;
   font-size:24px;
-  color:#ff9f00;
+  background: linear-gradient(90deg,#ff5f6d,#ffc371);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 @keyframes blink {
   0%,50%,100% { opacity: 1; }
@@ -195,15 +194,13 @@ body.dark .cell.win {
 <body>
 <h1>Tic-Tac-Toe</h1>
 
-<!-- Sound toggle -->
-<button id="soundToggle" onclick="toggleSound()">🔉</button>
-
 <!-- Mode select -->
 <div id="modeSelect" class="screen active">
   <h2>Select Mode</h2>
   <button onclick="setMode('pvp')">🎮 Player vs Player</button>
   <button onclick="setMode('ai')">🤖 Player vs Computer</button><br>
   <button id="modeToggle" onclick="toggleDark()">☀️/🌙</button>
+  <button id="soundToggle" onclick="toggleSound()">🔉</button>
   <div id="footer">Developed By Mahin</div>
 </div>
 
@@ -214,6 +211,8 @@ body.dark .cell.win {
   <button onclick="setDifficulty('medium')">😐 Medium</button>
   <button onclick="setDifficulty('hard')">😈 Hard</button><br>
   <button onclick="goBack('difficultySelect')">⬅️ Back</button>
+  <button id="soundToggle" onclick="toggleSound()">🔉</button>
+  <div id="footer">Developed By Mahin</div>
 </div>
 
 <!-- Character select (AI only) -->
@@ -222,6 +221,8 @@ body.dark .cell.win {
   <button onclick="setChar('X')">❌</button>
   <button onclick="setChar('O')">⭕</button><br>
   <button onclick="goBack('charSelect')">⬅️ Back</button>
+  <button id="soundToggle" onclick="toggleSound()">🔉</button>
+  <div id="footer">Developed By Mahin</div>
 </div>
 
 <!-- Game screen -->
@@ -231,6 +232,8 @@ body.dark .cell.win {
   <h3 id="status"></h3>
   <button onclick="restartGame()">🔁 Restart</button>
   <button onclick="backToMenu()">🏠 Main Menu</button>
+  <button id="soundToggle" onclick="toggleSound()">🔉</button>
+  <div id="footer">Developed By Mahin</div>
 </div>
 
 <script src="app.js"></script>

@@ -15,23 +15,33 @@ const sounds = {
   defeat: new Audio("sounds/defeat.mp3")
 };
 
-// Set max volume 60%
+// Preload sounds
 for (let key in sounds) {
   sounds[key].volume = 0.6;
+  sounds[key].preload = "auto";
 }
+
+// Silent first interaction to prime audio
+document.addEventListener("click", () => {
+  for (let key in sounds) {
+    sounds[key].play().catch(()=>{});
+    sounds[key].pause();
+    sounds[key].currentTime = 0;
+  }
+}, { once: true });
 
 // Helper to play sound only if enabled
 function playSound(name) {
   if (soundEnabled && sounds[name]) {
-    sounds[name].currentTime = 0; // rewind in case sound is still playing
+    sounds[name].currentTime = 0;
     sounds[name].play();
   }
 }
 
-// Sound toggle
+// Toggle sound
 function toggleSound() {
   soundEnabled = !soundEnabled;
-  document.getElementById("soundToggle").textContent = soundEnabled ? "🔉" : "🔇";
+  document.querySelectorAll("#soundToggle").forEach(b => b.textContent = soundEnabled ? "🔉" : "🔇");
 }
 
 // DOM Elements
@@ -99,7 +109,7 @@ function handleClick(i) {
   if (mode === "ai" && currentPlayer !== playerChar) return;
 
   board[i] = currentPlayer;
-  playSound("click"); // click sound
+  playSound("click");
   updateBoard();
 
   const winner = checkWinner();
@@ -123,7 +133,7 @@ function aiMove() {
 
     if (move !== undefined) {
       board[move] = aiChar;
-      playSound("click"); // AI click
+      playSound("click");
     }
 
     updateBoard();
