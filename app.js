@@ -9,7 +9,7 @@ let gameActive = true;
 const boardDiv = document.getElementById("board");
 const statusDiv = document.getElementById("status");
 
-// ---------------- Screen Navigation ----------------
+// Screen navigation
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -34,12 +34,8 @@ function setChar(char) {
 
   if (aiChar === "X") {
     currentPlayer = aiChar;
-    setTimeout(() => {
-      aiMove();
-    }, 600);
-  } else {
-    currentPlayer = playerChar;
-  }
+    setTimeout(() => { aiMove(); }, 600);
+  } else currentPlayer = playerChar;
 }
 
 function goBack(from) {
@@ -54,7 +50,7 @@ function backToMenu() {
   showScreen("modeSelect");
 }
 
-// ---------------- Game Setup ----------------
+// Game setup
 function startGame() {
   boardDiv.innerHTML = "";
   board = Array(9).fill("");
@@ -70,7 +66,7 @@ function startGame() {
   }
 }
 
-// ---------------- Player Move ----------------
+// Player move
 function handleClick(i) {
   if (!gameActive || board[i] !== "") return;
   if (mode === "ai" && currentPlayer !== playerChar) return;
@@ -89,7 +85,7 @@ function handleClick(i) {
   }
 }
 
-// ---------------- AI Move ----------------
+// AI move
 function aiMove() {
   if (!gameActive) return;
   let move;
@@ -114,7 +110,7 @@ function randomMove() {
   return available[Math.floor(Math.random() * available.length)];
 }
 
-// ---------------- Minimax ----------------
+// Minimax
 function bestMove() {
   let bestScore = -Infinity;
   let move;
@@ -141,27 +137,19 @@ function minimax(bd, depth, isMax) {
   if (isMax) {
     let best = -Infinity;
     for (let i = 0; i < 9; i++) {
-      if (bd[i] === "") {
-        bd[i] = aiChar;
-        best = Math.max(best, minimax(bd, depth + 1, false));
-        bd[i] = "";
-      }
+      if (bd[i] === "") { bd[i] = aiChar; best = Math.max(best, minimax(bd, depth + 1, false)); bd[i] = ""; }
     }
     return best;
   } else {
     let best = Infinity;
     for (let i = 0; i < 9; i++) {
-      if (bd[i] === "") {
-        bd[i] = playerChar;
-        best = Math.min(best, minimax(bd, depth + 1, true));
-        bd[i] = "";
-      }
+      if (bd[i] === "") { bd[i] = playerChar; best = Math.min(best, minimax(bd, depth + 1, true)); bd[i] = ""; }
     }
     return best;
   }
 }
 
-// ---------------- Update Board ----------------
+// Update board
 function updateBoard() {
   document.querySelectorAll(".cell").forEach((cell, i) => {
     cell.textContent = board[i];
@@ -170,13 +158,9 @@ function updateBoard() {
   });
 }
 
-// ---------------- Check Winner ----------------
+// Check winner
 function checkWinner() {
-  const wins = [
-    [0,1,2],[3,4,5],[6,7,8],
-    [0,3,6],[1,4,7],[2,5,8],
-    [0,4,8],[2,4,6]
-  ];
+  const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
   for (let combo of wins) {
     const [a,b,c] = combo;
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
@@ -188,11 +172,7 @@ function checkWinner() {
 }
 
 function checkWinnerLogic(bd) {
-  const wins = [
-    [0,1,2],[3,4,5],[6,7,8],
-    [0,3,6],[1,4,7],[2,5,8],
-    [0,4,8],[2,4,6]
-  ];
+  const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
   for (let combo of wins) {
     const [a,b,c] = combo;
     if (bd[a] && bd[a] === bd[b] && bd[a] === bd[c]) return bd[a];
@@ -200,7 +180,7 @@ function checkWinnerLogic(bd) {
   return null;
 }
 
-// ---------------- Highlight Winning Cells ----------------
+// Highlight winning cells
 function highlightWinCells(cells) {
   cells.forEach(i => {
     const cell = boardDiv.children[i];
@@ -208,23 +188,20 @@ function highlightWinCells(cells) {
   });
 }
 
-// ---------------- End Game ----------------
+// End game
 function endGame(winner) {
   gameActive = false;
   if (winner === "draw") statusDiv.textContent = "It's a draw!";
   else statusDiv.textContent = `${winner} wins! 🎉`;
 }
 
-// ---------------- Restart & Dark Mode ----------------
+// Restart & dark mode
 function restartGame() {
   document.querySelectorAll(".cell").forEach(c => c.remove());
   board = Array(9).fill("");
   gameActive = true;
-
   if (mode === "ai") showScreen("charSelect");
   else { showScreen("gameScreen"); startGame(); }
 }
 
-function toggleDark() {
-  document.body.classList.toggle("dark");
-}
+function toggleDark() { document.body.classList.toggle("dark"); }

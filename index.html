@@ -126,14 +126,14 @@ body.dark .cell {
 .cell.X { color: #ff005c; text-shadow: 0 0 18px #ff1d8e; }
 .cell.O { color: #00e1ff; text-shadow: 0 0 18px #00c4ff; }
 
-/* Winning cells highlight - responsive to mode */
+/* ===== Highlight winning cells ===== */
 .cell.win {
   animation: highlightWin 0.8s ease forwards;
   background: linear-gradient(135deg, #6a5af9, #00e5ff);
   box-shadow: 0 0 20px #6a5af9, 0 0 20px #00e5ff;
 }
 
-/* Dark mode variant */
+/* Dark mode winning highlight */
 body.dark .cell.win {
   background: linear-gradient(135deg, #ff6ec7, #ffcd3c);
   box-shadow: 0 0 20px #ff6ec7, 0 0 20px #ffcd3c;
@@ -180,11 +180,11 @@ body.dark .cell.win {
   <button onclick="goBack('difficultySelect')">⬅️ Back</button>
 </div>
 
-<!-- Character select -->
+<!-- Character select (AI only) -->
 <div id="charSelect" class="screen">
   <h2>Select Your Character</h2>
-  <button onclick="setChar('X')">❌ X</button>
-  <button onclick="setChar('O')">⭕ O</button><br>
+  <button onclick="setChar('X')" title="X">❌</button>
+  <button onclick="setChar('O')" title="O">⭕</button><br>
   <button onclick="goBack('charSelect')">⬅️ Back</button>
 </div>
 
