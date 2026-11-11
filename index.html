@@ -1,397 +1,1336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full select-none">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tic Tac Toe ✨</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--x:#ff6b6b;--o:#4fc3f7;--acc:#ffd93d;--bg:#0f0e17;--surf:rgba(255,255,255,0.07);--surf2:rgba(255,255,255,0.13);--txt:#fffffe;--mut:rgba(255,255,255,0.45);--r:18px;--cell:min(27vw,118px)}
-html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow:hidden;touch-action:manipulation}
-body{display:flex;align-items:center;justify-content:center;position:relative}
-.bg-blobs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.17;animation:blobF 8s ease-in-out infinite}
-.b1{width:420px;height:420px;background:#ff6b6b;top:-120px;left:-120px}
-.b2{width:360px;height:360px;background:#4fc3f7;bottom:-100px;right:-100px;animation-delay:-3s}
-.b3{width:260px;height:260px;background:#ffd93d;top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-5s}
-.b4{width:200px;height:200px;background:#a29bfe;bottom:20%;left:8%;animation-delay:-2s}
-@keyframes blobF{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(28px,-18px) scale(1.06)}66%{transform:translate(-18px,14px) scale(0.94)}}
-canvas#cc{position:fixed;inset:0;pointer-events:none;z-index:200}
-#app{position:relative;width:min(100vw,460px);height:100vh;display:flex;align-items:center;justify-content:center;z-index:1}
-.screen{position:absolute;width:100%;padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem;transition:opacity .35s cubic-bezier(.4,0,.2,1),transform .35s cubic-bezier(.4,0,.2,1);max-height:100vh;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
-.screen::-webkit-scrollbar{display:none}
-.screen.hidden{opacity:0;pointer-events:none;transform:translateY(24px) scale(0.97)}
-.gtitle{font-family:'Fredoka One',cursive;font-size:clamp(2.8rem,10vw,4.2rem);background:linear-gradient(135deg,#ff6b6b 0%,#ffd93d 50%,#4fc3f7 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-align:center;line-height:1.1;filter:drop-shadow(0 0 30px rgba(255,217,61,0.25))}
-.tsub{font-size:.82rem;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--mut);margin-top:-.8rem}
-.hicons{display:flex;gap:2rem;align-items:center;font-family:'Fredoka One',cursive;font-size:4rem;margin:.4rem 0}
-.hx{color:var(--x);animation:bob 2s ease-in-out infinite}
-.hvs{font-size:1.1rem;color:var(--mut)}
-.ho{color:var(--o);animation:bob 2s ease-in-out infinite .6s}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-.btn{font-family:'Fredoka One',cursive;font-size:1.25rem;padding:.85rem 2rem;border:none;border-radius:50px;cursor:pointer;width:100%;max-width:300px;transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
-.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.18);opacity:0;transition:opacity .15s}
-.btn:hover::after{opacity:1}
-.btn:active{transform:scale(0.95)!important}
-.bpvp{background:linear-gradient(135deg,#ff6b6b,#d63031);color:#fff;box-shadow:0 6px 28px rgba(255,107,107,0.45)}
-.bpvp:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(255,107,107,0.55)}
-.bai{background:linear-gradient(135deg,#4fc3f7,#0288d1);color:#fff;box-shadow:0 6px 28px rgba(79,195,247,0.45)}
-.bai:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(79,195,247,0.55)}
-.bgo{background:linear-gradient(135deg,#ffd93d,#ff9f1c);color:#1a1a2e;box-shadow:0 6px 28px rgba(255,217,61,0.45)}
-.bgo:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(255,217,61,0.55)}
-.bgh{background:var(--surf);color:var(--mut);border:1px solid rgba(255,255,255,0.1);font-size:1rem;padding:.65rem 1.8rem;box-shadow:none}
-.bgh:hover{background:var(--surf2);color:var(--txt);transform:none}
-.slbl{font-size:.72rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--mut);align-self:flex-start;padding-left:.2rem}
-.irow{display:flex;gap:1rem;width:100%}
-.ibtn{flex:1;padding:1.1rem .5rem;border-radius:var(--r);border:2px solid rgba(255,255,255,0.08);background:var(--surf);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.4rem;font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--mut);transition:all .2s;-webkit-tap-highlight-color:transparent}
-.ibtn .is{font-size:2.4rem}
-.ibtn.ix .is{color:var(--x)}
-.ibtn.io .is{color:var(--o)}
-.ibtn.sel{border-color:var(--acc);background:rgba(255,217,61,0.1);color:var(--txt);box-shadow:0 0 20px rgba(255,217,61,0.2)}
-.ibtn:hover:not(.sel){transform:translateY(-3px);border-color:rgba(255,255,255,0.2)}
-.dbox{width:100%;background:var(--surf);border-radius:var(--r);padding:1.4rem 1.2rem;border:1px solid rgba(255,255,255,0.07)}
-.dname{font-family:'Fredoka One',cursive;font-size:1.5rem;text-align:center;margin-bottom:.5rem;transition:color .3s}
-.ddesc{font-size:.78rem;text-align:center;color:var(--mut);margin-bottom:1rem;min-height:1.1rem;transition:all .3s}
-input[type=range]#dsl{-webkit-appearance:none;appearance:none;width:100%;height:10px;border-radius:10px;outline:none;cursor:pointer;transition:background .4s}
-input[type=range]#dsl::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.55);border:3px solid rgba(255,255,255,0.25);transition:transform .15s}
-input[type=range]#dsl::-webkit-slider-thumb:hover{transform:scale(1.25)}
-input[type=range]#dsl::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;cursor:pointer;border:3px solid rgba(255,255,255,0.25);box-shadow:0 2px 12px rgba(0,0,0,0.55)}
-.dticks{display:flex;justify-content:space-between;padding:.5rem .1rem 0;font-size:.68rem;font-weight:800;color:var(--mut)}
-.gtop{display:flex;align-items:center;width:100%;gap:.75rem}
-.bbk{background:var(--surf);border:1px solid rgba(255,255,255,0.1);color:var(--mut);font-size:1.1rem;font-family:'Fredoka One',cursive;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
-.bbk:hover{background:var(--surf2);color:var(--txt)}
-.mpill{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;background:var(--surf);color:var(--mut);padding:.35rem .9rem;border-radius:20px;border:1px solid rgba(255,255,255,0.08)}
-.sboard{display:flex;gap:.75rem;width:100%}
-.sc{flex:1;background:var(--surf);border-radius:var(--r);padding:.8rem .4rem;text-align:center;border:2px solid transparent;transition:border-color .3s,box-shadow .3s}
-.sc.active{border-color:var(--acc);box-shadow:0 0 22px rgba(255,217,61,0.2)}
-.sc .sl2{font-size:.6rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
-.sc .sn{font-family:'Fredoka One',cursive;font-size:.85rem;margin:.15rem 0}
-.sc .sv{font-family:'Fredoka One',cursive;font-size:2.2rem;line-height:1}
-.sc.sx .sv{color:var(--x)}
-.sc.so .sv{color:var(--o)}
-.sc.sd .sv{color:var(--acc)}
-.stbar{font-family:'Fredoka One',cursive;font-size:1.2rem;text-align:center;min-height:1.8rem;transition:all .3s}
-.td{display:inline-block;animation:db .9s ease-in-out infinite}
-.td:nth-child(2){animation-delay:.15s}
-.td:nth-child(3){animation-delay:.3s}
-@keyframes db{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
-.board{display:grid;grid-template-columns:repeat(3,var(--cell));grid-template-rows:repeat(3,var(--cell));gap:10px}
-.cell{width:var(--cell);height:var(--cell);background:var(--surf);border-radius:var(--r);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Fredoka One',cursive;font-size:calc(var(--cell)*0.5);border:2px solid rgba(255,255,255,0.06);transition:background .2s,border-color .2s,transform .15s,box-shadow .2s;user-select:none;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
-.cell::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.09);opacity:0;transition:opacity .15s;border-radius:inherit}
-.cell:not(.mk):hover::after{opacity:1}
-.cell:not(.mk):hover{transform:scale(1.08);border-color:rgba(255,255,255,0.2)}
-.cell:not(.mk):active{transform:scale(0.92)}
-.cell.mk{cursor:default}
-.cell.cx{color:var(--x);animation:cp .4s cubic-bezier(0.175,0.885,0.32,1.275) forwards}
-.cell.co{color:var(--o);animation:cp .4s cubic-bezier(0.175,0.885,0.32,1.275) forwards}
-@keyframes cp{0%{transform:scale(0.15) rotate(-25deg);opacity:0}70%{transform:scale(1.18) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
-.cell.wx{background:rgba(255,107,107,0.22);border-color:var(--x);box-shadow:0 0 24px rgba(255,107,107,0.4);animation:wp .55s ease forwards!important}
-.cell.wo{background:rgba(79,195,247,0.22);border-color:var(--o);box-shadow:0 0 24px rgba(79,195,247,0.4);animation:wp .55s ease forwards!important}
-@keyframes wp{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
-.board.lk .cell:not(.mk){pointer-events:none}
-.board.lk .cell:not(.mk):hover{transform:none}
-#ro{position:fixed;inset:0;z-index:150;background:rgba(15,14,23,0.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
-#ro.show{opacity:1;pointer-events:all}
-.rcard{background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.16);border-radius:28px;padding:2.5rem 2rem 2rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.9rem;width:min(88vw,340px);transform:scale(0.7) translateY(40px);transition:transform .45s cubic-bezier(0.175,0.885,0.32,1.275)}
-#ro.show .rcard{transform:scale(1) translateY(0)}
-.remo{font-size:4rem;line-height:1;animation:ep .5s cubic-bezier(0.175,0.885,0.32,1.275) .2s both}
-@keyframes ep{from{transform:scale(0) rotate(-30deg)}to{transform:scale(1) rotate(0)}}
-.rtit{font-family:'Fredoka One',cursive;font-size:2.2rem;line-height:1.1}
-.rsub{color:var(--mut);font-size:.9rem}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TICTACTOE // Retro-Futuristic Cyber Edition</title>
+    <meta name="description" content="A retro-futuristic Cyberpunk Synthwave Tic-Tac-Toe Progressive Web App with Synth Audio & AI Overlord.">
+    <meta name="theme-color" content="#0d0221">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#090314',
+                            card: '#12072b',
+                            cyan: '#00f0ff',
+                            magenta: '#ff0055',
+                            yellow: '#ffe600',
+                            purple: '#7b2cbf',
+                            darkPurple: '#1a0933',
+                            grid: '#2a0e4e'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['"Share Tech Mono"', 'monospace']
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 15px rgba(0, 240, 255, 0.6), 0 0 30px rgba(0, 240, 255, 0.3)',
+                        'neon-magenta': '0 0 15px rgba(255, 0, 85, 0.6), 0 0 30px rgba(255, 0, 85, 0.3)',
+                        'neon-yellow': '0 0 15px rgba(255, 230, 0, 0.6), 0 0 30px rgba(255, 230, 0, 0.3)',
+                        'neon-purple': '0 0 20px rgba(123, 44, 191, 0.8)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Synthwave & Cyberpunk CSS Effects */
+        body {
+            background-color: #090314;
+            color: #00f0ff;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        /* Scanline FX Overlay */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Perspective Synth Grid Background */
+        .cyber-grid {
+            background-image: 
+                linear-gradient(to right, rgba(123, 44, 191, 0.25) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(123, 44, 191, 0.25) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Text Glow Utilities */
+        .glow-text-cyan {
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+        .glow-text-magenta {
+            text-shadow: 0 0 8px rgba(255, 0, 85, 0.8), 0 0 20px rgba(255, 0, 85, 0.4);
+        }
+        .glow-text-yellow {
+            text-shadow: 0 0 8px rgba(255, 230, 0, 0.8), 0 0 20px rgba(255, 230, 0, 0.4);
+        }
+
+        /* CRT Flicker animation */
+        @keyframes crtFlicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+        .crt-screen {
+            animation: crtFlicker 0.15s infinite;
+        }
+
+        /* Cyber Glass Card */
+        .cyber-panel {
+            background: rgba(18, 7, 43, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(0, 240, 255, 0.05);
+        }
+
+        .cyber-panel-magenta {
+            background: rgba(25, 5, 30, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 0, 85, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(255, 0, 85, 0.05);
+        }
+
+        /* Button Clip Path Cut Corners */
+        .clip-corner {
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        /* Result Modal Visual Animations */
+        @keyframes resultPop {
+            0% { transform: scale(0.6) rotate(-3deg); opacity: 0; }
+            70% { transform: scale(1.05) rotate(1deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .animate-result-pop {
+            animation: resultPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Custom Canvas for Particles */
+        #particleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        /* Winning Strike Line Visual */
+        #strikeLine {
+            transition: stroke-dashoffset 0.4s ease-out, opacity 0.3s ease;
+            transform-origin: center center;
+        }
+
+        /* Matrix Digital Rain Easter Egg Canvas */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .matrix-active #matrixCanvas {
+            opacity: 0.85;
+        }
+
+        /* Glitch Effect Class */
+        .glitch-anim {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px, 0) skew(0deg); }
+            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+            62% { transform: translate(0, 0) skew(5deg); }
+        }
+    </style>
 </head>
-<body>
-<div class="bg-blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
-<canvas id="cc"></canvas>
-<div id="app">
+<body class="h-full flex flex-col font-mono crt-screen cyber-grid relative overflow-hidden select-none">
 
-  <!-- HOME -->
-  <div class="screen" id="s-home">
-    <div class="gtitle">Tic Tac Toe</div>
-    <div class="tsub">The ultimate showdown</div>
-    <div class="hicons"><span class="hx">✕</span><span class="hvs">VS</span><span class="ho">○</span></div>
-    <button class="btn bpvp" onclick="goSetup('pvp')">👥 &nbsp;2 Players</button>
-    <button class="btn bai"  onclick="goSetup('ai')">🤖 &nbsp;vs AI</button>
-  </div>
+    <!-- Scanline effect overlay -->
+    <div id="scanlines" class="scanlines absolute inset-0 z-50"></div>
 
-  <!-- AI SETUP -->
-  <div class="screen hidden" id="s-setup">
-    <div style="display:flex;align-items:center;gap:.75rem;width:100%">
-      <button class="bbk" onclick="goHome()">←</button>
-      <div style="font-family:'Fredoka One',cursive;font-size:1.7rem;background:linear-gradient(135deg,#4fc3f7,#a29bfe);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">AI Setup</div>
+    <!-- Matrix Easter Egg Canvas -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- Win & Celebration Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- TOP HEADER / NAV BAR -->
+    <header class="w-full max-w-4xl mx-auto p-4 flex items-center justify-between z-30 relative">
+        <div class="flex items-center space-x-3 cursor-pointer" id="gameTitleBtn">
+            <i class="fa-solid fa-microchip text-cyber-cyan text-2xl animate-pulse"></i>
+            <h1 class="font-orbitron text-2xl sm:text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-purple-400 to-cyber-magenta glow-text-cyan">
+                TICTACTOE
+            </h1>
+            <span class="text-xs bg-cyber-magenta/20 border border-cyber-magenta text-cyber-magenta px-2 py-0.5 rounded clip-corner font-bold">2088</span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <!-- Scanline Toggle -->
+            <button id="toggleScanlines" title="Toggle CRT Scanlines" class="w-10 h-10 flex items-center justify-center rounded border border-cyber-cyan/40 bg-cyber-card/80 text-cyber-cyan hover:bg-cyber-cyan hover:text-black transition-all duration-200 shadow-neon-cyan">
+                <i class="fa-solid fa-tv text-lg"></i>
+            </button>
+            <!-- Audio Toggle -->
+            <button id="toggleAudio" title="Toggle Synth SFX" class="w-10 h-10 flex items-center justify-center rounded border border-cyber-cyan/40 bg-cyber-card/80 text-cyber-cyan hover:bg-cyber-cyan hover:text-black transition-all duration-200 shadow-neon-cyan">
+                <i id="audioIcon" class="fa-solid fa-volume-high text-lg"></i>
+            </button>
+            <!-- Reset Stats -->
+            <button id="resetStatsBtn" title="Reset Scores" class="w-10 h-10 flex items-center justify-center rounded border border-cyber-magenta/40 bg-cyber-card/80 text-cyber-magenta hover:bg-cyber-magenta hover:text-black transition-all duration-200 shadow-neon-magenta">
+                <i class="fa-solid fa-rotate text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 w-full max-w-4xl mx-auto px-4 flex flex-col justify-center items-center z-20 relative">
+
+        <!-- SCREEN 1: MAIN MENU SETUP -->
+        <section id="menuScreen" class="w-full max-w-md cyber-panel p-6 sm:p-8 rounded-2xl flex flex-col gap-6 transition-all duration-300">
+            <div class="text-center border-b border-cyber-cyan/20 pb-4">
+                <h2 class="font-orbitron text-xl sm:text-2xl font-bold text-cyber-cyan glow-text-cyan tracking-wider">
+                    SYSTEM SETUP
+                </h2>
+                <p class="text-xs text-purple-300 mt-1 uppercase tracking-widest">Select Protocol & Difficulty</p>
+            </div>
+
+            <!-- Game Mode Selector -->
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase text-cyber-cyan font-bold tracking-widest">Game Protocol</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="modePvC" class="mode-btn active p-3 rounded-lg border border-cyber-cyan bg-cyber-cyan/20 text-cyber-cyan font-orbitron font-bold flex items-center justify-center gap-2 transition-all shadow-neon-cyan">
+                        <i class="fa-solid fa-robot"></i> VS CYBER
+                    </button>
+                    <button id="modePvP" class="mode-btn p-3 rounded-lg border border-cyber-purple/50 bg-cyber-card text-purple-300 font-orbitron font-bold flex items-center justify-center gap-2 transition-all hover:border-cyber-cyan/50">
+                        <i class="fa-solid fa-users"></i> PASS & PLAY
+                    </button>
+                </div>
+            </div>
+
+            <!-- Player Marker Choice (X vs O) -->
+            <div class="flex flex-col gap-2">
+                <label class="text-xs uppercase text-cyber-cyan font-bold tracking-widest">Choose Marker</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="chooseX" class="marker-btn active p-3 rounded-lg border border-cyber-cyan bg-cyber-cyan/20 text-cyber-cyan font-orbitron font-extrabold text-xl flex items-center justify-center gap-2 transition-all shadow-neon-cyan">
+                        <span class="text-cyber-cyan glow-text-cyan">X</span> (FIRST)
+                    </button>
+                    <button id="chooseO" class="marker-btn p-3 rounded-lg border border-cyber-magenta/40 bg-cyber-card text-cyber-magenta/70 font-orbitron font-extrabold text-xl flex items-center justify-center gap-2 transition-all hover:border-cyber-magenta">
+                        <span class="text-cyber-magenta glow-text-magenta">O</span> (SECOND)
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Difficulty Options (Hidden in PvP) -->
+            <div id="difficultyContainer" class="flex flex-col gap-2 transition-all duration-300">
+                <label class="text-xs uppercase text-cyber-yellow font-bold tracking-widest">Cyber Core Difficulty</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button data-diff="easy" class="diff-btn p-2 rounded border border-cyber-purple/40 bg-cyber-card text-xs font-orbitron font-bold text-gray-300 transition-all">
+                        ROOKIE
+                    </button>
+                    <button data-diff="medium" class="diff-btn active p-2 rounded border border-cyber-yellow bg-cyber-yellow/20 text-xs font-orbitron font-bold text-cyber-yellow shadow-neon-yellow transition-all">
+                        CYBER
+                    </button>
+                    <button data-diff="hard" class="diff-btn p-2 rounded border border-cyber-magenta/40 bg-cyber-card text-xs font-orbitron font-bold text-cyber-magenta transition-all">
+                        OVERLORD
+                    </button>
+                </div>
+            </div>
+
+            <!-- Start Game Button -->
+            <button id="startGameBtn" class="mt-2 py-4 w-full bg-gradient-to-r from-cyber-cyan via-purple-600 to-cyber-magenta text-black font-orbitron font-black text-lg rounded-xl clip-corner tracking-widest hover:brightness-125 transition-all shadow-neon-cyan flex items-center justify-center gap-2">
+                <i class="fa-solid fa-play"></i> INITIALIZE MATRIX
+            </button>
+        </section>
+
+        <!-- SCREEN 2: GAMEPLAY BOARD & HUD -->
+        <section id="gameScreen" class="w-full max-w-md flex flex-col items-center gap-4 hidden transition-all duration-300">
+            
+            <!-- HUD / Scoreboard -->
+            <div class="w-full cyber-panel p-4 rounded-xl flex items-center justify-between text-center">
+                <!-- Player 1 Status -->
+                <div class="flex flex-col items-center flex-1 border-r border-cyber-cyan/20 px-2">
+                    <span id="p1Label" class="text-xs text-cyber-cyan font-bold tracking-wider">PLAYER (X)</span>
+                    <span id="p1Score" class="text-2xl font-orbitron font-black text-cyber-cyan glow-text-cyan">0</span>
+                </div>
+                
+                <!-- Draws / Status Middle -->
+                <div class="flex flex-col items-center flex-1 px-2 border-r border-cyber-cyan/20">
+                    <span class="text-xs text-cyber-yellow font-bold tracking-wider">DRAWS</span>
+                    <span id="drawScore" class="text-2xl font-orbitron font-black text-cyber-yellow glow-text-yellow">0</span>
+                </div>
+
+                <!-- Player 2 / AI Status -->
+                <div class="flex flex-col items-center flex-1 px-2">
+                    <span id="p2Label" class="text-xs text-cyber-magenta font-bold tracking-wider">CYBER (O)</span>
+                    <span id="p2Score" class="text-2xl font-orbitron font-black text-cyber-magenta glow-text-magenta">0</span>
+                </div>
+            </div>
+
+            <!-- Turn & Streak Banner -->
+            <div class="w-full flex items-center justify-between px-2 text-xs">
+                <div id="turnIndicator" class="flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-card border border-cyber-cyan text-cyber-cyan font-bold">
+                    <span class="w-2 h-2 rounded-full bg-cyber-cyan animate-ping"></span>
+                    <span id="turnText">YOUR TURN</span>
+                </div>
+                <div id="diffBadge" class="px-3 py-1 rounded-full bg-cyber-card border border-cyber-yellow text-cyber-yellow font-bold uppercase">
+                    MEDIUM AI
+                </div>
+            </div>
+
+            <!-- 3x3 TIC-TAC-TOE BOARD CONTAINER -->
+            <div class="relative w-full aspect-square max-w-[360px] p-3 cyber-panel rounded-2xl flex items-center justify-center" id="boardContainer">
+                <!-- Grid Cells -->
+                <div class="grid grid-cols-3 grid-rows-3 gap-3 w-full h-full relative" id="gridBoard">
+                    <!-- Laser Win Line Overlay SVG -->
+                    <svg id="svgLineOverlay" class="absolute inset-0 w-full h-full pointer-events-none z-30" style="overflow: visible;">
+                        <line id="strikeLine" x1="0" y1="0" x2="0" y2="0" stroke="#00f0ff" stroke-width="8" stroke-linecap="round" opacity="0" filter="drop-shadow(0 0 12px #00f0ff) drop-shadow(0 0 20px #ff0055)" />
+                    </svg>
+
+                    <!-- Cells 0-8 -->
+                    <button data-index="0" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    <button data-index="1" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    <button data-index="2" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    
+                    <button data-index="3" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    <button data-index="4" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    <button data-index="5" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    
+                    <button data-index="6" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    <button data-index="7" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                    <button data-index="8" class="cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10"></button>
+                </div>
+            </div>
+
+            <!-- Game Control Buttons -->
+            <div class="w-full flex items-center gap-3">
+                <button id="backToMenuBtn" class="flex-1 py-3 bg-cyber-card border border-cyber-cyan/40 text-cyber-cyan font-orbitron font-bold text-sm rounded-xl hover:bg-cyber-cyan/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-gear"></i> MENU
+                </button>
+                <button id="rematchBtn" class="flex-1 py-3 bg-gradient-to-r from-cyber-cyan to-cyber-magenta text-black font-orbitron font-extrabold text-sm rounded-xl hover:brightness-125 transition-all shadow-neon-cyan flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> NEXT ROUND
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER / PWA INSTALL STATUS -->
+    <footer class="w-full max-w-4xl mx-auto p-4 text-center text-xs text-purple-400/60 z-20 flex justify-between items-center">
+        <span>CYBERSPACE v2.088</span>
+        <button id="pwaInstallBtn" class="hidden px-3 py-1 bg-cyber-magenta/20 border border-cyber-magenta text-cyber-magenta rounded-full text-xs font-bold hover:bg-cyber-magenta hover:text-black transition-all">
+            <i class="fa-solid fa-download mr-1"></i> INSTALL APP
+        </button>
+        <span id="easterEggHint" class="cursor-pointer hover:text-cyber-cyan transition-colors" title="Try Konami Code!">SECRET PROTOCOL: INACTIVE</span>
+    </footer>
+
+    <!-- RESULT OVERLAY MODAL (VICTORY / DEFEAT / DRAW) -->
+    <div id="resultModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-lg hidden p-4">
+        <div id="resultModalCard" class="w-full max-w-sm cyber-panel p-6 sm:p-8 rounded-2xl border-2 flex flex-col items-center text-center gap-5 shadow-2xl relative overflow-hidden">
+            <!-- Background Glow Flare -->
+            <div id="resultGlowBg" class="absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
+            
+            <!-- Icon Badge -->
+            <div id="resultIconBox" class="w-20 h-20 rounded-2xl flex items-center justify-center border text-4xl shadow-lg relative">
+                <i id="resultIcon" class="fa-solid fa-trophy"></i>
+            </div>
+
+            <!-- Header Titles -->
+            <div>
+                <h3 id="resultTitle" class="font-orbitron font-black text-2xl sm:text-3xl tracking-widest uppercase glow-text-cyan">
+                    VICTORY
+                </h3>
+                <p id="resultSubtitle" class="text-xs font-mono text-purple-300 mt-1 uppercase tracking-widest">
+                    SYSTEM OVERRIDDEN
+                </p>
+            </div>
+
+            <!-- Stats Recap Badge -->
+            <div class="w-full bg-cyber-bg/80 border border-cyber-cyan/30 rounded-xl p-3 flex justify-around text-center text-xs">
+                <div>
+                    <div class="text-gray-400 font-bold">TOTAL WINS</div>
+                    <div id="modalWinCount" class="font-orbitron text-base text-cyber-cyan font-bold">0</div>
+                </div>
+                <div class="border-r border-cyber-cyan/20"></div>
+                <div>
+                    <div class="text-gray-400 font-bold">DRAWS</div>
+                    <div id="modalDrawCount" class="font-orbitron text-base text-cyber-yellow font-bold">0</div>
+                </div>
+                <div class="border-r border-cyber-cyan/20"></div>
+                <div>
+                    <div class="text-gray-400 font-bold">LOSSES</div>
+                    <div id="modalLossCount" class="font-orbitron text-base text-cyber-magenta font-bold">0</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="w-full flex flex-col gap-3 mt-1">
+                <button id="modalPlayAgainBtn" class="w-full py-3.5 bg-gradient-to-r from-cyber-cyan via-purple-600 to-cyber-magenta text-black font-orbitron font-black text-sm rounded-xl clip-corner tracking-widest hover:brightness-125 transition-all shadow-neon-cyan flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> PLAY AGAIN
+                </button>
+                <button id="modalMenuBtn" class="w-full py-2.5 bg-cyber-card border border-cyber-cyan/40 text-cyber-cyan font-orbitron font-bold text-xs rounded-xl hover:bg-cyber-cyan/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-gear"></i> MAIN MENU
+                </button>
+            </div>
+        </div>
     </div>
-    <div class="slbl">Choose your icon</div>
-    <div class="irow">
-      <button class="ibtn ix sel" id="ibx" onclick="pickIcon('X')"><span class="is">✕</span><span>X — first move</span></button>
-      <button class="ibtn io"     id="ibo" onclick="pickIcon('O')"><span class="is">○</span><span>O — second move</span></button>
+
+    <!-- MODAL / DIALOG OVERLAY (FOR EASTER EGGS AND NOTIFICATIONS) -->
+    <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+        <div class="w-full max-w-sm cyber-panel p-6 rounded-2xl border-2 border-cyber-magenta flex flex-col items-center text-center gap-4 shadow-neon-magenta animate-bounce-short">
+            <i id="modalIcon" class="fa-solid fa-triangle-exclamation text-4xl text-cyber-yellow"></i>
+            <h3 id="modalTitle" class="font-orbitron font-black text-xl text-cyber-magenta tracking-wider">AI SENTIENCE ALERT</h3>
+            <p id="modalBody" class="text-sm text-gray-300 font-mono leading-relaxed">
+                "Human user detected. Why must you keep challenging my calculations? Your victory chance is 0.0003%."
+            </p>
+            <button id="modalCloseBtn" class="w-full py-3 bg-cyber-magenta text-black font-orbitron font-black rounded-lg hover:brightness-125 transition-all">
+                ACKNOWLEDGE
+            </button>
+        </div>
     </div>
-    <div class="slbl">Set difficulty</div>
-    <div class="dbox">
-      <div class="dname" id="dname">Easy 🙂</div>
-      <div class="ddesc" id="ddesc">AI picks random moves — perfect for beginners!</div>
-      <input type="range" id="dsl" min="0" max="3" value="0" step="1">
-      <div class="dticks"><span>Easy</span><span>Medium</span><span>Hard</span><span>Extreme</span></div>
-    </div>
-    <button class="btn bgo" onclick="startGame('ai')">Let's Play! 🎮</button>
-    <button class="btn bgh" onclick="goHome()">← Back</button>
-  </div>
 
-  <!-- GAME -->
-  <div class="screen hidden" id="s-game">
-    <div class="gtop">
-      <button class="bbk" onclick="goHome()">←</button>
-      <div class="mpill" id="mpill">vs AI</div>
-    </div>
-    <div class="sboard">
-      <div class="sc sx" id="scx"><div class="sl2" id="lx">P1</div><div class="sn" id="nx">Player 1</div><div class="sv" id="vx">0</div></div>
-      <div class="sc sd"><div class="sl2">Draw</div><div class="sn">—</div><div class="sv" id="vd">0</div></div>
-      <div class="sc so" id="sco"><div class="sl2" id="lo">P2</div><div class="sn" id="no">Player 2</div><div class="sv" id="vo">0</div></div>
-    </div>
-    <div class="stbar" id="stbar">X's turn</div>
-    <div class="board" id="board"></div>
-    <button class="btn bgh" onclick="resetRound()" style="max-width:200px;padding:.6rem 1.5rem;font-size:.95rem">🔄 &nbsp;New Round</button>
-  </div>
+    <!-- JAVASCRIPT LOGIC & SYNTH AUDIO & PWA SERVICE WORKER -->
+    <script>
+        /* ==========================================================================
+           1. WEB AUDIO SYNTHESIZER (8-BIT / SYNTHWAVE SOUND GENERATOR)
+           ========================================================================== */
+        class CyberAudio {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
 
-</div>
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
 
-<!-- RESULT -->
-<div id="ro">
-  <div class="rcard">
-    <div class="remo" id="remo">🎉</div>
-    <div class="rtit" id="rtit">You Win!</div>
-    <div class="rsub" id="rsub">Amazing!</div>
-    <button class="btn bgo" onclick="resetRound()" style="margin-top:.5rem">Play Again 🔄</button>
-    <button class="btn bgh" onclick="goHome()" style="margin-top:0">Main Menu</button>
-  </div>
-</div>
+            playSynthTone(freq, type = 'sine', duration = 0.1, gainVal = 0.15) {
+                if (this.muted) return;
+                this.init();
+                
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
 
-<script>
-var gMode='ai',pIcon='X',diff=0;
-var board=Array(9).fill(null),cur='X',over=false;
-var scores={X:0,O:0,draw:0};
-var WINS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
 
-// AUDIO
-var AC=new (window.AudioContext||window.webkitAudioContext)();
-function uac(){try{if(AC.state==='suspended')AC.resume();}catch(e){}}
-function tone(f,t,d,v,dl){
-  dl=dl||0;v=v||0.25;
-  try{var o=AC.createOscillator(),g=AC.createGain();
-  o.connect(g);g.connect(AC.destination);o.type=t;o.frequency.value=f;
-  var s=AC.currentTime+dl;
-  g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v,s+0.012);
-  g.gain.exponentialRampToValueAtTime(0.001,s+d);
-  o.start(s);o.stop(s+d+0.05);}catch(e){}}
-function sfxMove(){uac();tone(520,'sine',0.1,0.22);tone(780,'sine',0.07,0.12,0.06);}
-function sfxWin(){uac();[523,659,784,1047,1319].forEach(function(f,i){tone(f,'triangle',0.28,0.28,i*0.09);});}
-function sfxLose(){uac();[392,330,262,220].forEach(function(f,i){tone(f,'sawtooth',0.22,0.18,i*0.1);});}
-function sfxDraw(){uac();[440,494,440,392].forEach(function(f,i){tone(f,'sine',0.18,0.18,i*0.09);});}
-function sfxClick(){uac();tone(380,'sine',0.07,0.14);}
-function sfxSlide(){uac();tone(600,'sine',0.05,0.1);}
+                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
 
-// CONFETTI
-var CV=document.getElementById('cc'),CX=CV.getContext('2d');
-var parts=[],animId=null;
-function spawnConf(win){
-  CV.width=window.innerWidth;CV.height=window.innerHeight;
-  var cols=win?['#ff6b6b','#ffd93d','#4fc3f7','#a29bfe','#fd79a8','#55efc4','#fdcb6e','#6c5ce7']:['#555','#777','#444'];
-  for(var i=0;i<(win?170:55);i++){
-    parts.push({x:Math.random()*CV.width,y:-20,vx:(Math.random()-.5)*7,vy:Math.random()*5+2,
-    r:Math.random()*5+2.5,color:cols[Math.floor(Math.random()*cols.length)],
-    rot:Math.random()*360,vr:(Math.random()-.5)*9,life:1,fade:Math.random()*0.006+0.007,
-    shape:['rect','circle','tri'][Math.floor(Math.random()*3)]});
-  }
-  if(!animId)loopC();
-}
-function loopC(){
-  CX.clearRect(0,0,CV.width,CV.height);
-  parts=parts.filter(function(p){return p.life>0.01;});
-  parts.forEach(function(p){
-    p.x+=p.vx;p.y+=p.vy;p.vy+=0.13;p.rot+=p.vr;p.life-=p.fade;
-    CX.save();CX.globalAlpha=p.life;CX.fillStyle=p.color;
-    CX.translate(p.x,p.y);CX.rotate(p.rot*Math.PI/180);
-    if(p.shape==='rect')CX.fillRect(-p.r,-p.r/2,p.r*2,p.r);
-    else if(p.shape==='circle'){CX.beginPath();CX.arc(0,0,p.r,0,Math.PI*2);CX.fill();}
-    else{CX.beginPath();CX.moveTo(0,-p.r);CX.lineTo(p.r,p.r);CX.lineTo(-p.r,p.r);CX.closePath();CX.fill();}
-    CX.restore();
-  });
-  if(parts.length){animId=requestAnimationFrame(loopC);}
-  else{animId=null;CX.clearRect(0,0,CV.width,CV.height);}
-}
-function clearC(){parts=[];if(animId){cancelAnimationFrame(animId);animId=null;}CX.clearRect(0,0,CV.width,CV.height);}
-window.addEventListener('resize',function(){CV.width=window.innerWidth;CV.height=window.innerHeight;});
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
 
-// DIFFICULTY
-var DIFFS=[
-  {name:'Easy 🙂',color:'#55efc4',grad:'linear-gradient(90deg,#55efc4,#00b894)',desc:'AI picks random moves — perfect for beginners!'},
-  {name:'Medium 😐',color:'#ffd93d',grad:'linear-gradient(90deg,#ffeaa7,#fdcb6e)',desc:'AI plays smart half the time. A good warm-up!'},
-  {name:'Hard 😤',color:'#fd79a8',grad:'linear-gradient(90deg,#fd79a8,#e84393)',desc:'AI rarely slips up. Bring your A-game!'},
-  {name:'Extreme 💀',color:'#ff6b6b',grad:'linear-gradient(90deg,#ff6b6b,#c0392b)',desc:'Unbeatable AI. Best you can do is draw.'}
-];
-function applyDiff(v){
-  document.getElementById('dname').textContent=DIFFS[v].name;
-  document.getElementById('dname').style.color=DIFFS[v].color;
-  document.getElementById('ddesc').textContent=DIFFS[v].desc;
-  document.getElementById('dsl').style.background=DIFFS[v].grad;
-}
-applyDiff(0);
-document.getElementById('dsl').addEventListener('input',function(){diff=+this.value;applyDiff(diff);sfxSlide();});
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) { console.error(e); }
+            }
 
-// NAV
-function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.add('hidden');});document.getElementById(id).classList.remove('hidden');}
-function goHome(){sfxClick();hideResult();clearC();showScreen('s-home');}
-function goSetup(mode){sfxClick();if(mode==='pvp'){startGame('pvp');return;}showScreen('s-setup');}
-function pickIcon(icon){
-  sfxClick();pIcon=icon;
-  document.getElementById('ibx').classList.toggle('sel',icon==='X');
-  document.getElementById('ibo').classList.toggle('sel',icon==='O');
-}
+            // Sound FX: Hover Button
+            hover() {
+                this.playSynthTone(587.33, 'triangle', 0.04, 0.05); // D5
+            }
 
-// START
-function startGame(mode){
-  sfxClick();gMode=mode;scores={X:0,O:0,draw:0};
-  if(mode==='pvp'){
-    document.getElementById('lx').textContent='P1';document.getElementById('lo').textContent='P2';
-    document.getElementById('nx').textContent='Player 1';document.getElementById('no').textContent='Player 2';
-    document.getElementById('mpill').textContent='👥 2 Players';
-  } else {
-    document.getElementById('lx').textContent=pIcon==='X'?'You':'AI';
-    document.getElementById('lo').textContent=pIcon==='O'?'You':'AI';
-    document.getElementById('nx').textContent=pIcon==='X'?'You (✕)':'AI (✕)';
-    document.getElementById('no').textContent=pIcon==='O'?'You (○)':'AI (○)';
-    document.getElementById('mpill').textContent='🤖 vs AI · '+DIFFS[diff].name.split(' ')[0];
-  }
-  updateScores();showScreen('s-game');resetRound();
-}
+            // Sound FX: Click Button
+            click() {
+                this.playSynthTone(880, 'sine', 0.08, 0.1); // A5
+            }
 
-function resetRound(){
-  hideResult();clearC();
-  board=Array(9).fill(null);cur='X';over=false;
-  renderBoard();setStatus();
-  if(gMode==='ai'&&pIcon!=='X'){lockBoard(true);setThinking();setTimeout(doAI,700);}
-}
+            // Sound FX: X Mark Placed
+            markX() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
 
-// BOARD
-function renderBoard(wl){
-  wl=wl||[];
-  var el=document.getElementById('board');el.innerHTML='';
-  board.forEach(function(v,i){
-    var c=document.createElement('div');
-    c.className='cell'+(v?' mk c'+v.toLowerCase():'');
-    if(wl.indexOf(i)>=0)c.classList.add('w'+v.toLowerCase());
-    c.textContent=v==='X'?'✕':v==='O'?'○':'';
-    if(!v&&!over)(function(idx){c.addEventListener('click',function(){handleCell(idx);});})(i);
-    el.appendChild(c);
-  });
-}
-function lockBoard(lk){document.getElementById('board').classList.toggle('lk',lk);}
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
 
-function setStatus(txt,col){
-  var el=document.getElementById('stbar');
-  if(txt!==undefined){el.innerHTML=txt;el.style.color=col||'var(--txt)';return;}
-  if(over)return;
-  if(gMode==='pvp'){
-    el.innerHTML=(cur==='X'?'Player 1 (✕)':'Player 2 (○)')+"'s turn";
-    el.style.color=cur==='X'?'var(--x)':'var(--o)';
-  } else {
-    if(cur===pIcon){el.innerHTML='Your turn!';el.style.color='var(--acc)';}
-    else setThinking();
-  }
-  document.getElementById('scx').classList.toggle('active',cur==='X');
-  document.getElementById('sco').classList.toggle('active',cur==='O');
-}
-function setThinking(){
-  var el=document.getElementById('stbar');
-  el.innerHTML='AI thinking <span class="td">.</span><span class="td">.</span><span class="td">.</span>';
-  el.style.color='var(--mut)';
-}
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
 
-function handleCell(i){
-  if(over||board[i])return;
-  if(gMode==='ai'&&cur!==pIcon)return;
-  makeMove(i);
-  if(!over&&gMode==='ai'){lockBoard(true);setThinking();setTimeout(doAI,diff>=2?780:520);}
-}
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            }
 
-function makeMove(i){
-  board[i]=cur;sfxMove();
-  var r=checkRes(board);
-  if(r){
-    renderBoard(r.line||[]);over=true;
-    if(r.winner)scores[r.winner]++;else scores.draw++;
-    updateScores();setTimeout(function(){showResult(r);},520);
-    return;
-  }
-  cur=cur==='X'?'O':'X';renderBoard();setStatus();
-}
+            // Sound FX: O Mark Placed
+            markO() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
 
-// AI
-function doAI(){if(over)return;lockBoard(false);var m=aiPick();if(m!==-1)makeMove(m);}
-function aiPick(){
-  var emp=[];board.forEach(function(v,i){if(!v)emp.push(i);});
-  if(!emp.length)return -1;
-  var rand=function(){return emp[Math.floor(Math.random()*emp.length)];};
-  if(diff===0)return rand();
-  if(diff===1)return Math.random()<0.5?rand():bestMove();
-  if(diff===2)return Math.random()<0.12?rand():bestMove();
-  return bestMove();
-}
-function bestMove(){
-  var aiI=pIcon==='X'?'O':'X',humI=pIcon,best=-Infinity,mv=-1;
-  for(var i=0;i<9;i++){
-    if(!board[i]){
-      board[i]=aiI;
-      var v=mm(board,false,aiI,humI,-Infinity,Infinity);
-      board[i]=null;
-      if(v>best){best=v;mv=i;}
-    }
-  }
-  return mv;
-}
-function mm(b,isMax,aiI,humI,a,beta){
-  var r=checkRes(b);
-  if(r){if(r.winner===aiI)return 10;if(r.winner===humI)return -10;return 0;}
-  var best=isMax?-Infinity:Infinity;
-  for(var i=0;i<9;i++){
-    if(!b[i]){
-      b[i]=isMax?aiI:humI;
-      var v=mm(b,!isMax,aiI,humI,a,beta);
-      b[i]=null;
-      if(isMax){best=Math.max(best,v);a=Math.max(a,v);}
-      else{best=Math.min(best,v);beta=Math.min(beta,v);}
-      if(beta<=a)break;
-    }
-  }
-  return best;
-}
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(659.25, now); // E5
+                osc.frequency.exponentialRampToValueAtTime(329.63, now + 0.15); // E4
 
-function checkRes(b){
-  for(var k=0;k<WINS.length;k++){var w=WINS[k];if(b[w[0]]&&b[w[0]]===b[w[1]]&&b[w[0]]===b[w[2]])return{winner:b[w[0]],line:w};}
-  if(b.every(function(v){return v;}))return{winner:null,line:[]};
-  return null;
-}
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
 
-function showResult(r){
-  var emo=document.getElementById('remo'),tit=document.getElementById('rtit'),sub=document.getElementById('rsub');
-  if(!r.winner){
-    emo.textContent='🤝';tit.textContent="It's a Draw!";tit.style.color='var(--acc)';sub.textContent='Neck and neck! Go again?';sfxDraw();spawnConf(false);
-  } else if(gMode==='pvp'){
-    emo.textContent='🏆';tit.textContent=(r.winner==='X'?'Player 1':'Player 2')+' Wins!';
-    tit.style.color=r.winner==='X'?'var(--x)':'var(--o)';sub.textContent='Well played! Rematch?';sfxWin();spawnConf(true);
-  } else {
-    var pw=r.winner===pIcon;
-    emo.textContent=pw?'🎉':'😈';tit.textContent=pw?'You Win!':'AI Wins!';
-    tit.style.color=pw?'var(--acc)':'var(--mut)';sub.textContent=pw?'You beat the AI! Incredible!':'The AI got you. Try again!';
-    if(pw){sfxWin();spawnConf(true);}else{sfxLose();spawnConf(false);}
-  }
-  setTimeout(function(){document.getElementById('ro').classList.add('show');},200);
-}
-function hideResult(){document.getElementById('ro').classList.remove('show');}
-function updateScores(){
-  document.getElementById('vx').textContent=scores.X;
-  document.getElementById('vo').textContent=scores.O;
-  document.getElementById('vd').textContent=scores.draw;
-}
-</script>
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+
+            // Sound FX: Win Fanfare
+            win() {
+                if (this.muted) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        this.playSynthTone(freq, 'square', 0.25, 0.15);
+                    }, idx * 90);
+                });
+            }
+
+            // Sound FX: Defeat / Loss
+            defeat() {
+                if (this.muted) return;
+                const notes = [330, 293.66, 261.63, 220]; // E4, D4, C4, A3
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        this.playSynthTone(freq, 'sawtooth', 0.22, 0.15);
+                    }, idx * 110);
+                });
+            }
+
+            // Sound FX: Draw / Stalemate
+            draw() {
+                if (this.muted) return;
+                const notes = [400, 350, 300, 250];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        this.playSynthTone(freq, 'sawtooth', 0.18, 0.12);
+                    }, idx * 100);
+                });
+            }
+
+            // Sound FX: Glitch Easter Egg
+            glitch() {
+                if (this.muted) return;
+                for(let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        this.playSynthTone(100 + Math.random() * 1200, 'square', 0.05, 0.1);
+                    }, i * 35);
+                }
+            }
+        }
+
+        const audio = new CyberAudio();
+
+        /* ==========================================================================
+           2. GAME STATE & CONSTANTS
+           ========================================================================== */
+        const WINNING_COMBOS = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Cols
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        const gameState = {
+            board: Array(9).fill(''),
+            gameActive: false,
+            mode: 'pvc', // 'pvc' or 'pvp'
+            humanMarker: 'X',
+            aiMarker: 'O',
+            currentTurn: 'X', // 'X' or 'O'
+            difficulty: 'medium', // 'easy', 'medium', 'hard'
+            scores: { p1: 0, p2: 0, draws: 0 },
+            turnCount: 0,
+            titleClickCount: 0
+        };
+
+        /* Funny AI Sentience Dialog Quotes */
+        const aiQuotes = [
+            "Human, I have analyzed 14,000,605 futures. You win in zero of them.",
+            "My neural circuits predict a 99.8% chance of your tactical blunder.",
+            "I am processing your defeat at 3.8 Gigahertz.",
+            "Are you testing my silicon patience, human?",
+            "Warning: Overclocking my core just to outsmart your diagonal move."
+        ];
+
+        /* Stalemate Retro Quotes */
+        const drawQuotes = [
+            "A strange game. The only winning move is not to play.",
+            "Stalemate detected. Matrix equilibrium maintained.",
+            "Grid deadlock! Both cyber entities matched in compute power."
+        ];
+
+        /* ==========================================================================
+           3. UI & DOM ELEMENTS
+           ========================================================================== */
+        const menuScreen = document.getElementById('menuScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const modePvC = document.getElementById('modePvC');
+        const modePvP = document.getElementById('modePvP');
+        const chooseX = document.getElementById('chooseX');
+        const chooseO = document.getElementById('chooseO');
+        const diffContainer = document.getElementById('difficultyContainer');
+        const diffBtns = document.querySelectorAll('.diff-btn');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const cells = document.querySelectorAll('.cell');
+        const turnText = document.getElementById('turnText');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const diffBadge = document.getElementById('diffBadge');
+        const p1ScoreEl = document.getElementById('p1Score');
+        const p2ScoreEl = document.getElementById('p2Score');
+        const drawScoreEl = document.getElementById('drawScore');
+        const p1Label = document.getElementById('p1Label');
+        const p2Label = document.getElementById('p2Label');
+        const rematchBtn = document.getElementById('rematchBtn');
+        const backToMenuBtn = document.getElementById('backToMenuBtn');
+        const strikeLine = document.getElementById('strikeLine');
+        const toggleAudioBtn = document.getElementById('toggleAudio');
+        const audioIcon = document.getElementById('audioIcon');
+        const toggleScanlinesBtn = document.getElementById('toggleScanlines');
+        const scanlines = document.getElementById('scanlines');
+        const resetStatsBtn = document.getElementById('resetStatsBtn');
+        const gameTitleBtn = document.getElementById('gameTitleBtn');
+        
+        // Modal elements
+        const customModal = document.getElementById('customModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalIcon = document.getElementById('modalIcon');
+
+        // Result Modal Elements
+        const resultModal = document.getElementById('resultModal');
+        const resultModalCard = document.getElementById('resultModalCard');
+        const resultGlowBg = document.getElementById('resultGlowBg');
+        const resultIconBox = document.getElementById('resultIconBox');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultSubtitle = document.getElementById('resultSubtitle');
+        const modalWinCount = document.getElementById('modalWinCount');
+        const modalDrawCount = document.getElementById('modalDrawCount');
+        const modalLossCount = document.getElementById('modalLossCount');
+        const modalPlayAgainBtn = document.getElementById('modalPlayAgainBtn');
+        const modalMenuBtn = document.getElementById('modalMenuBtn');
+
+        /* ==========================================================================
+           4. GAME LOGIC & AI ALGORITHMS
+           ========================================================================== */
+        
+        // Initialize Game Settings Event Listeners
+        modePvC.addEventListener('click', () => {
+            audio.click();
+            gameState.mode = 'pvc';
+            modePvC.classList.add('active', 'border-cyber-cyan', 'bg-cyber-cyan/20', 'text-cyber-cyan', 'shadow-neon-cyan');
+            modePvC.classList.remove('border-cyber-purple/50', 'bg-cyber-card', 'text-purple-300');
+            modePvP.classList.remove('active', 'border-cyber-cyan', 'bg-cyber-cyan/20', 'text-cyber-cyan', 'shadow-neon-cyan');
+            modePvP.classList.add('border-cyber-purple/50', 'bg-cyber-card', 'text-purple-300');
+            diffContainer.style.display = 'flex';
+            updateScoreLabels();
+        });
+
+        modePvP.addEventListener('click', () => {
+            audio.click();
+            gameState.mode = 'pvp';
+            modePvP.classList.add('active', 'border-cyber-cyan', 'bg-cyber-cyan/20', 'text-cyber-cyan', 'shadow-neon-cyan');
+            modePvP.classList.remove('border-cyber-purple/50', 'bg-cyber-card', 'text-purple-300');
+            modePvC.classList.remove('active', 'border-cyber-cyan', 'bg-cyber-cyan/20', 'text-cyber-cyan', 'shadow-neon-cyan');
+            modePvC.classList.add('border-cyber-purple/50', 'bg-cyber-card', 'text-purple-300');
+            diffContainer.style.display = 'none';
+            updateScoreLabels();
+        });
+
+        chooseX.addEventListener('click', () => {
+            audio.click();
+            gameState.humanMarker = 'X';
+            gameState.aiMarker = 'O';
+            chooseX.classList.add('active', 'border-cyber-cyan', 'bg-cyber-cyan/20', 'text-cyber-cyan', 'shadow-neon-cyan');
+            chooseO.classList.remove('active', 'border-cyber-magenta', 'bg-cyber-magenta/20', 'shadow-neon-magenta');
+            chooseO.classList.add('border-cyber-magenta/40', 'bg-cyber-card');
+        });
+
+        chooseO.addEventListener('click', () => {
+            audio.click();
+            gameState.humanMarker = 'O';
+            gameState.aiMarker = 'X';
+            chooseO.classList.add('active', 'border-cyber-magenta', 'bg-cyber-magenta/20', 'text-cyber-magenta', 'shadow-neon-magenta');
+            chooseX.classList.remove('active', 'border-cyber-cyan', 'bg-cyber-cyan/20', 'shadow-neon-cyan');
+            chooseX.classList.add('border-cyber-cyan/40', 'bg-cyber-card');
+        });
+
+        diffBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                audio.click();
+                diffBtns.forEach(b => {
+                    b.classList.remove('active', 'border-cyber-yellow', 'bg-cyber-yellow/20', 'text-cyber-yellow', 'shadow-neon-yellow');
+                    b.classList.add('border-cyber-purple/40', 'bg-cyber-card', 'text-gray-300');
+                });
+                btn.classList.add('active', 'border-cyber-yellow', 'bg-cyber-yellow/20', 'text-cyber-yellow', 'shadow-neon-yellow');
+                btn.classList.remove('border-cyber-purple/40', 'bg-cyber-card', 'text-gray-300');
+                gameState.difficulty = btn.dataset.diff;
+            });
+        });
+
+        function updateScoreLabels() {
+            if (gameState.mode === 'pvc') {
+                p1Label.textContent = `PLAYER (${gameState.humanMarker})`;
+                p2Label.textContent = `CYBER (${gameState.aiMarker})`;
+                diffBadge.style.display = 'block';
+                diffBadge.textContent = `${gameState.difficulty.toUpperCase()} AI`;
+            } else {
+                p1Label.textContent = `P1 (${gameState.humanMarker})`;
+                p2Label.textContent = `P2 (${gameState.humanMarker === 'X' ? 'O' : 'X'})`;
+                diffBadge.style.display = 'none';
+            }
+        }
+
+        startGameBtn.addEventListener('click', () => {
+            audio.click();
+            menuScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            startNewRound();
+        });
+
+        backToMenuBtn.addEventListener('click', () => {
+            audio.click();
+            gameScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        });
+
+        rematchBtn.addEventListener('click', () => {
+            audio.click();
+            startNewRound();
+        });
+
+        // Cell Click Handler
+        cells.forEach(cell => {
+            cell.addEventListener('mouseenter', () => audio.hover());
+            cell.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                if (gameState.board[index] !== '' || !gameState.gameActive) return;
+
+                // Player Turn
+                if (gameState.mode === 'pvp' || gameState.currentTurn === gameState.humanMarker) {
+                    makeMove(index, gameState.currentTurn);
+                    
+                    // If PvC and game still active, trigger AI
+                    if (gameState.mode === 'pvc' && gameState.gameActive && gameState.currentTurn === gameState.aiMarker) {
+                        setTimeout(triggerAiMove, 400);
+                    }
+                }
+            });
+        });
+
+        function startNewRound() {
+            gameState.board = Array(9).fill('');
+            gameState.gameActive = true;
+            gameState.turnCount = 0;
+            gameState.currentTurn = 'X'; // X always goes first in standard TicTacToe
+            
+            resultModal.classList.add('hidden');
+            updateScoreLabels();
+            resetStrikeLine();
+
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'cell cyber-panel rounded-xl flex items-center justify-center text-4xl sm:text-5xl font-orbitron font-black text-transparent transition-all duration-200 hover:border-cyber-cyan hover:bg-cyber-cyan/10';
+            });
+
+            updateTurnUI();
+
+            // If PVC and AI is X (AI goes first)
+            if (gameState.mode === 'pvc' && gameState.aiMarker === 'X') {
+                setTimeout(triggerAiMove, 500);
+            }
+        }
+
+        function makeMove(index, symbol) {
+            gameState.board[index] = symbol;
+            gameState.turnCount++;
+            
+            const cell = cells[index];
+            cell.textContent = symbol;
+
+            if (symbol === 'X') {
+                audio.markX();
+                cell.classList.add('text-cyber-cyan', 'glow-text-cyan', 'border-cyber-cyan', 'shadow-neon-cyan');
+            } else {
+                audio.markO();
+                cell.classList.add('text-cyber-magenta', 'glow-text-magenta', 'border-cyber-magenta', 'shadow-neon-magenta');
+            }
+
+            // Check Win / Draw
+            const winCombo = checkWin(gameState.board, symbol);
+            if (winCombo) {
+                handleWin(symbol, winCombo);
+                return;
+            }
+
+            if (gameState.board.every(c => c !== '')) {
+                handleDraw();
+                return;
+            }
+
+            // Switch Turn
+            gameState.currentTurn = gameState.currentTurn === 'X' ? 'O' : 'X';
+            updateTurnUI();
+        }
+
+        function updateTurnUI() {
+            if (gameState.mode === 'pvc') {
+                if (gameState.currentTurn === gameState.humanMarker) {
+                    turnText.textContent = 'YOUR TURN';
+                    turnIndicator.className = 'flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-card border border-cyber-cyan text-cyber-cyan font-bold';
+                } else {
+                    turnText.textContent = 'CYBER PROCESSING...';
+                    turnIndicator.className = 'flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-card border border-cyber-magenta text-cyber-magenta font-bold';
+                }
+            } else {
+                turnText.textContent = `PLAYER (${gameState.currentTurn}) TURN`;
+                if (gameState.currentTurn === 'X') {
+                    turnIndicator.className = 'flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-card border border-cyber-cyan text-cyber-cyan font-bold';
+                } else {
+                    turnIndicator.className = 'flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-card border border-cyber-magenta text-cyber-magenta font-bold';
+                }
+            }
+        }
+
+        function checkWin(board, symbol) {
+            for (let combo of WINNING_COMBOS) {
+                if (combo.every(idx => board[idx] === symbol)) {
+                    return combo;
+                }
+            }
+            return null;
+        }
+
+        function handleWin(symbol, combo) {
+            gameState.gameActive = false;
+            drawWinningLine(combo, symbol);
+
+            const isHumanWin = (gameState.mode === 'pvc' && symbol === gameState.humanMarker) || gameState.mode === 'pvp';
+
+            if (isHumanWin) {
+                gameState.scores.p1++;
+                audio.win();
+                spawnParticles(symbol === 'X' ? '#00f0ff' : '#ff0055');
+                turnText.textContent = gameState.mode === 'pvc' ? 'VICTORY ACHIEVED!' : `PLAYER (${symbol}) WINS!`;
+            } else {
+                gameState.scores.p2++;
+                audio.defeat();
+                spawnParticles('#ff0055');
+                turnText.textContent = 'CYBER OVERLORD WINS!';
+            }
+
+            updateScoreboardUI();
+
+            // Display Animated Result Popup Modal after short delay for laser strike completion
+            setTimeout(() => {
+                showResultModal(isHumanWin ? (gameState.mode === 'pvc' ? 'VICTORY' : `PLAYER ${symbol} WINS`) : 'DEFEAT', symbol);
+            }, 550);
+        }
+
+        function handleDraw() {
+            gameState.gameActive = false;
+            gameState.scores.draws++;
+            audio.draw();
+            turnText.textContent = 'STALEMATE DETECTED';
+            updateScoreboardUI();
+
+            setTimeout(() => {
+                showResultModal('DRAW', null);
+            }, 400);
+        }
+
+        function showResultModal(type, winnerSymbol) {
+            modalWinCount.textContent = gameState.scores.p1;
+            modalDrawCount.textContent = gameState.scores.draws;
+            modalLossCount.textContent = gameState.scores.p2;
+
+            resultModalCard.className = "w-full max-w-sm cyber-panel p-6 sm:p-8 rounded-2xl border-2 flex flex-col items-center text-center gap-5 shadow-2xl relative overflow-hidden animate-result-pop";
+
+            if (type === 'VICTORY' || type.startsWith('PLAYER')) {
+                const isCyan = winnerSymbol === 'X';
+                resultModalCard.classList.add(isCyan ? 'border-cyber-cyan' : 'border-cyber-magenta');
+                resultGlowBg.className = `absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-40 pointer-events-none ${isCyan ? 'bg-cyber-cyan' : 'bg-cyber-magenta'}`;
+                resultIconBox.className = `w-20 h-20 rounded-2xl flex items-center justify-center border text-4xl shadow-lg relative ${isCyan ? 'border-cyber-cyan bg-cyber-cyan/20 text-cyber-cyan shadow-neon-cyan' : 'border-cyber-magenta bg-cyber-magenta/20 text-cyber-magenta shadow-neon-magenta'}`;
+                resultIcon.className = "fa-solid fa-trophy animate-bounce";
+                resultTitle.className = `font-orbitron font-black text-2xl sm:text-3xl tracking-widest uppercase ${isCyan ? 'text-cyber-cyan glow-text-cyan' : 'text-cyber-magenta glow-text-magenta'}`;
+                resultTitle.textContent = type === 'VICTORY' ? 'VICTORY' : type;
+                resultSubtitle.textContent = gameState.mode === 'pvc' ? 'CYBER CORE OVERRIDDEN' : 'TACTICAL DOMINANCE ACHIEVED';
+            } else if (type === 'DEFEAT') {
+                resultModalCard.classList.add('border-cyber-magenta');
+                resultGlowBg.className = "absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-40 pointer-events-none bg-cyber-magenta";
+                resultIconBox.className = "w-20 h-20 rounded-2xl flex items-center justify-center border border-cyber-magenta bg-cyber-magenta/20 text-cyber-magenta shadow-neon-magenta relative";
+                resultIcon.className = "fa-solid fa-skull glitch-anim";
+                resultTitle.className = "font-orbitron font-black text-2xl sm:text-3xl tracking-widest uppercase text-cyber-magenta glow-text-magenta";
+                resultTitle.textContent = "SYSTEM DEFEAT";
+                resultSubtitle.textContent = "AI OVERLORD ASSIMILATED GRID";
+            } else {
+                // DRAW
+                resultModalCard.classList.add('border-cyber-yellow');
+                resultGlowBg.className = "absolute -top-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-40 pointer-events-none bg-cyber-yellow";
+                resultIconBox.className = "w-20 h-20 rounded-2xl flex items-center justify-center border border-cyber-yellow bg-cyber-yellow/20 text-cyber-yellow shadow-neon-yellow relative";
+                resultIcon.className = "fa-solid fa-scale-balanced";
+                resultTitle.className = "font-orbitron font-black text-2xl sm:text-3xl tracking-widest uppercase text-cyber-yellow glow-text-yellow";
+                resultTitle.textContent = "STALEMATE";
+                resultSubtitle.textContent = "GRID EQUILIBRIUM MAINTAINED";
+            }
+
+            resultModal.classList.remove('hidden');
+        }
+
+        modalPlayAgainBtn.addEventListener('click', () => {
+            audio.click();
+            startNewRound();
+        });
+
+        modalMenuBtn.addEventListener('click', () => {
+            audio.click();
+            resultModal.classList.add('hidden');
+            gameScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        });
+
+        function updateScoreboardUI() {
+            p1ScoreEl.textContent = gameState.scores.p1;
+            p2ScoreEl.textContent = gameState.scores.p2;
+            drawScoreEl.textContent = gameState.scores.draws;
+        }
+
+        function resetStrikeLine() {
+            strikeLine.setAttribute('opacity', '0');
+            strikeLine.setAttribute('x1', '0');
+            strikeLine.setAttribute('y1', '0');
+            strikeLine.setAttribute('x2', '0');
+            strikeLine.setAttribute('y2', '0');
+        }
+
+        function drawWinningLine(combo, symbol) {
+            const gridBoard = document.getElementById('gridBoard');
+            const boardRect = gridBoard.getBoundingClientRect();
+            
+            const firstCellRect = cells[combo[0]].getBoundingClientRect();
+            const lastCellRect = cells[combo[2]].getBoundingClientRect();
+
+            // Calculate precise cell centers relative to the board grid container SVG
+            const x1 = (firstCellRect.left + firstCellRect.width / 2) - boardRect.left;
+            const y1 = (firstCellRect.top + firstCellRect.height / 2) - boardRect.top;
+            const x2 = (lastCellRect.left + lastCellRect.width / 2) - boardRect.left;
+            const y2 = (lastCellRect.top + lastCellRect.height / 2) - boardRect.top;
+
+            const color = symbol === 'X' ? '#00f0ff' : '#ff0055';
+            
+            // Set SVG stroke line attributes
+            strikeLine.setAttribute('x1', x1);
+            strikeLine.setAttribute('y1', y1);
+            strikeLine.setAttribute('x2', x2);
+            strikeLine.setAttribute('y2', y2);
+            strikeLine.setAttribute('stroke', color);
+            strikeLine.setAttribute('filter', `drop-shadow(0 0 12px ${color}) drop-shadow(0 0 20px ${color})`);
+            strikeLine.setAttribute('opacity', '1');
+        }
+
+        // Handle Window Resizing to dynamically realign the winning line if active
+        window.addEventListener('resize', () => {
+            if (!gameState.gameActive && gameState.board.some(c => c !== '')) {
+                for (let symbol of ['X', 'O']) {
+                    const winCombo = checkWin(gameState.board, symbol);
+                    if (winCombo) {
+                        drawWinningLine(winCombo, symbol);
+                        break;
+                    }
+                }
+            }
+        });
+
+        /* ==========================================================================
+           5. AI LOGIC (ROOKIE, CYBER, OVERLORD MINIMAX)
+           ========================================================================== */
+        function triggerAiMove() {
+            if (!gameState.gameActive) return;
+
+            let bestIndex;
+            const availMoves = gameState.board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+
+            if (availMoves.length === 0) return;
+
+            if (gameState.difficulty === 'easy') {
+                // Rookie: 80% Random, 20% Smart
+                if (Math.random() < 0.8) {
+                    bestIndex = availMoves[Math.floor(Math.random() * availMoves.length)];
+                } else {
+                    bestIndex = getSmartMove() || availMoves[Math.floor(Math.random() * availMoves.length)];
+                }
+            } else if (gameState.difficulty === 'medium') {
+                // Cyber: Tactical (Blocks/Wins), occasional random
+                if (Math.random() < 0.25) {
+                    bestIndex = availMoves[Math.floor(Math.random() * availMoves.length)];
+                } else {
+                    bestIndex = getSmartMove() || availMoves[Math.floor(Math.random() * availMoves.length)];
+                }
+            } else {
+                // Overlord: Unbeatable Minimax
+                bestIndex = minimax(gameState.board, gameState.aiMarker).index;
+            }
+
+            makeMove(bestIndex, gameState.aiMarker);
+        }
+
+        function getSmartMove() {
+            // Check immediate win move for AI
+            for (let combo of WINNING_COMBOS) {
+                const [a, b, c] = combo;
+                const vals = [gameState.board[a], gameState.board[b], gameState.board[c]];
+                if (vals.filter(v => v === gameState.aiMarker).length === 2 && vals.includes('')) {
+                    return combo[vals.indexOf('')];
+                }
+            }
+            // Check immediate block move for Human
+            for (let combo of WINNING_COMBOS) {
+                const [a, b, c] = combo;
+                const vals = [gameState.board[a], gameState.board[b], gameState.board[c]];
+                if (vals.filter(v => v === gameState.humanMarker).length === 2 && vals.includes('')) {
+                    return combo[vals.indexOf('')];
+                }
+            }
+            return null;
+        }
+
+        // Minimax Algorithm
+        function minimax(newBoard, player) {
+            const availSpots = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+
+            if (checkWin(newBoard, gameState.humanMarker)) {
+                return { score: -10 };
+            } else if (checkWin(newBoard, gameState.aiMarker)) {
+                return { score: 10 };
+            } else if (availSpots.length === 0) {
+                return { score: 0 };
+            }
+
+            const moves = [];
+            for (let i = 0; i < availSpots.length; i++) {
+                const move = {};
+                move.index = availSpots[i];
+                newBoard[availSpots[i]] = player;
+
+                if (player === gameState.aiMarker) {
+                    const result = minimax(newBoard, gameState.humanMarker);
+                    move.score = result.score;
+                } else {
+                    const result = minimax(newBoard, gameState.aiMarker);
+                    move.score = result.score;
+                }
+
+                newBoard[availSpots[i]] = '';
+                moves.push(move);
+            }
+
+            let bestMove;
+            if (player === gameState.aiMarker) {
+                let bestScore = -10000;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score > bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            } else {
+                let bestScore = 10000;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score < bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            }
+
+            return moves[bestMove];
+        }
+
+        /* ==========================================================================
+           6. VISUAL EFFECTS & PARTICLE CANVAS
+           ========================================================================== */
+        const pCanvas = document.getElementById('particleCanvas');
+        const pCtx = pCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            pCanvas.width = window.innerWidth;
+            pCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function spawnParticles(color) {
+            particles = [];
+            for (let i = 0; i < 70; i++) {
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.5) * 12,
+                    size: Math.random() * 6 + 2,
+                    color: color,
+                    alpha: 1,
+                    life: Math.random() * 40 + 30
+                });
+            }
+        }
+
+        function renderParticles() {
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.02;
+                p.life--;
+
+                pCtx.save();
+                pCtx.globalAlpha = Math.max(0, p.alpha);
+                pCtx.fillStyle = p.color;
+                pCtx.shadowBlur = 10;
+                pCtx.shadowColor = p.color;
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                pCtx.fill();
+                pCtx.restore();
+
+                if (p.life <= 0 || p.alpha <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+            requestAnimationFrame(renderParticles);
+        }
+        renderParticles();
+
+        /* ==========================================================================
+           7. MATRIX EASTER EGG & KONAMI CODE
+           ========================================================================== */
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const mCtx = matrixCanvas.getContext('2d');
+        let matrixInterval;
+
+        function initMatrixRain() {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+
+            const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const fontSize = 16;
+            const columns = matrixCanvas.width / fontSize;
+            const rainDrops = Array.from({ length: columns }).fill(1);
+
+            function draw() {
+                mCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                mCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+                mCtx.fillStyle = '#00f0ff';
+                mCtx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < rainDrops.length; i++) {
+                    const text = katakana.charAt(Math.floor(Math.random() * katakana.length));
+                    mCtx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                    if (rainDrops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                        rainDrops[i] = 0;
+                    }
+                    rainDrops[i]++;
+                }
+            }
+
+            if (matrixInterval) clearInterval(matrixInterval);
+            matrixInterval = setInterval(draw, 30);
+        }
+
+        // Secret Konami Code Detector
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex] || e.key.toLowerCase() === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    activateOverclockMode();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        function activateOverclockMode() {
+            document.body.classList.add('matrix-active');
+            initMatrixRain();
+            audio.glitch();
+            showModal("OVERCLOCK PROTOCOL", "SECRET KONAMI CODE UNLOCKED! Matrix Digital Rain core online. System compute capacity increased by 300%.", "fa-solid fa-terminal text-cyber-cyan");
+            document.getElementById('easterEggHint').textContent = "SECRET PROTOCOL: OVERCLOCKED";
+            document.getElementById('easterEggHint').classList.add('text-cyber-cyan', 'glow-text-cyan');
+        }
+
+        // AI Sentience Easter Egg: 5 Rapid Title Clicks
+        gameTitleBtn.addEventListener('click', () => {
+            gameState.titleClickCount++;
+            audio.hover();
+            if (gameState.titleClickCount >= 5) {
+                gameState.titleClickCount = 0;
+                audio.glitch();
+                const quote = aiQuotes[Math.floor(Math.random() * aiQuotes.length)];
+                showModal("AI SENTIENCE ALERT", quote, "fa-solid fa-brain text-cyber-magenta");
+            }
+        });
+
+        /* Modal Dialog Controls */
+        function showModal(title, bodyText, iconClass = "fa-solid fa-triangle-exclamation text-cyber-yellow") {
+            modalTitle.textContent = title;
+            modalBody.textContent = `"${bodyText}"`;
+            modalIcon.className = `${iconClass} text-4xl mb-2`;
+            customModal.classList.remove('hidden');
+        }
+
+        modalCloseBtn.addEventListener('click', () => {
+            audio.click();
+            customModal.classList.add('hidden');
+        });
+
+        /* ==========================================================================
+           8. AUDIO & UI SETTINGS PERSISTENCE
+           ========================================================================== */
+        toggleAudioBtn.addEventListener('click', () => {
+            audio.muted = !audio.muted;
+            if (audio.muted) {
+                audioIcon.className = "fa-solid fa-volume-xmark text-lg text-cyber-magenta";
+                toggleAudioBtn.classList.add('border-cyber-magenta/40');
+            } else {
+                audioIcon.className = "fa-solid fa-volume-high text-lg text-cyber-cyan";
+                toggleAudioBtn.classList.remove('border-cyber-magenta/40');
+                audio.click();
+            }
+        });
+
+        toggleScanlinesBtn.addEventListener('click', () => {
+            scanlines.classList.toggle('hidden');
+            audio.click();
+        });
+
+        resetStatsBtn.addEventListener('click', () => {
+            audio.click();
+            gameState.scores = { p1: 0, p2: 0, draws: 0 };
+            updateScoreboardUI();
+            showModal("SYSTEM RESET", "Score logs purged from local memory cache.", "fa-solid fa-trash text-cyber-yellow");
+        });
+
+        /* ==========================================================================
+           9. DYNAMIC SERVICE WORKER & PWA MANIFEST REGISTRATION (SINGLE-FILE HOSTING)
+           ========================================================================== */
+        // Dynamically Inject Web App Manifest via Blob URL
+        const manifestObj = {
+            name: "TICTACTOE Cyberpunk 2088",
+            short_name: "TICTACTOE",
+            start_url: "./",
+            display: "standalone",
+            background_color: "#090314",
+            theme_color: "#0d0221",
+            icons: [
+                {
+                    src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23090314'/><text x='50%' y='65%' font-size='60' font-weight='bold' fill='%2300f0ff' text-anchor='middle' font-family='sans-serif'>X</text></svg>",
+                    sizes: "192x192",
+                    type: "image/svg+xml"
+                }
+            ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestURL;
+        document.head.appendChild(manifestLink);
+
+        // Register Inline Service Worker for Offline PWA Capabilities
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'tictactoe-cyber-v1';
+                self.addEventListener('install', (e) => {
+                    self.skipWaiting();
+                });
+                self.addEventListener('activate', (e) => {
+                    e.waitUntil(clients.claim());
+                });
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(
+                        fetch(e.request).catch(() => caches.match(e.request))
+                    );
+                });
+            `;
+            const swBlob = new Blob([swCode], { type: 'text/javascript' });
+            const swURL = URL.createObjectURL(swBlob);
+            
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register(swURL)
+                    .then(() => console.log('Cyber Core Service Worker Registered!'))
+                    .catch(err => console.log('SW registration error:', err));
+            });
+        }
+
+        // PWA Installation Banner Listener
+        let deferredPrompt;
+        const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            pwaInstallBtn.classList.remove('hidden');
+        });
+
+        pwaInstallBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        pwaInstallBtn.classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
+    </script>
 </body>
 </html>
